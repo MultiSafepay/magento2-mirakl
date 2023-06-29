@@ -2,8 +2,8 @@
   <img src="https://camo.githubusercontent.com/517483ae0eaba9884f397e9af1c4adc7bbc231575ac66cc54292e00400edcd10/68747470733a2f2f7777772e6d756c7469736166657061792e636f6d2f66696c6561646d696e2f74656d706c6174652f696d672f6d756c7469736166657061792d6c6f676f2d69636f6e2e737667" width="400px" position="center">
 </p>
 
-# MultiSafepay module for the Mirakl
-The module is currently in beta. Please use with caution.
+# MultiSafepay module for Mirakl
+**The module is currently in beta. Please use with caution.**
 
 ## About MultiSafepay ##
 MultiSafepay is a collecting payment service provider which means we take care of the agreements, technical details and payment collection required for each payment method. You can start selling online today and manage all your transactions from one place.
@@ -37,6 +37,29 @@ php bin/magento setup:upgrade
 php bin/magento setup:di:compile
 php bin/magento cache:flush
 ```
+
+## Configuration.
+
+**In Mirakl:** 
+- Browse to Settings > Advanced parameters > Stores > Custom Fields.
+- Add a new section: MultiSafepay
+- Add a new custom field using the following details: 
+  - Section: MultiSafepay
+  - Label: Merchant ID
+  - Code: multisafepay-merchant-id
+  - Type Text: 
+  - Read Only
+  - Required Field: yes. 
+  - Value for existing stores, must be empty, but that value must be filled in the store configuration page.
+- Browse to Administration > Technical Settings > System Integrations > Customer Debit and configure the debit connector with the following settings:
+  - Transmission type: HTTP
+  - URL: {OPERATOR-URL}/multisafepay/mirakl/debit
+  - Method: POST
+  - Content Type: Json
+
+**In Magento:**
+- Browse to Stores > Settings > Configuration > MultiSafepay > Mirakl.
+- Fill the required data; according the environment setup in MultiSafepay general settings.
 
 ## Support
 You can create issues on our repository. If you need any additional help or support, please contact <a href="mailto:integration@multisafepay.com">integration@multisafepay.com</a>

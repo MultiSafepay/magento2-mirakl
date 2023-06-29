@@ -1,0 +1,62 @@
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="multisafepay_mirakl_customer_debit" resource="default" engine="innodb" comment="Mirakl Customer Debit">
+        <column xsi:type="int" name="customer_debit_id" unsigned="true" nullable="false" identity="true" comment="ID" />
+        <column xsi:type="decimal" name="amount" scale="2" nullable="false" comment="Amount" />
+        <column xsi:type="varchar" name="currency_iso_code" length="3" nullable="false" comment="Currency ISO code" />
+        <column xsi:type="varchar" name="customer_id" nullable="false" length="255" comment="Customer ID" />
+        <column xsi:type="varchar" name="debit_entity_id" nullable="false" length="255" comment="Debit Entity ID" />
+        <column xsi:type="varchar" name="debit_entity_type" nullable="false" length="255" comment="Debit Entity Type" />
+        <column xsi:type="varchar" name="order_commercial_id" nullable="false" length="255" comment="Order Commercial ID" />
+        <column xsi:type="varchar" name="order_id" nullable="false" length="255" comment="Order ID" />
+        <column xsi:type="varchar" name="shop_id" nullable="false" length="255" comment="Shop ID" />
+        <column xsi:type="timestamp" name="timestamp" nullable="false" default="CURRENT_TIMESTAMP" comment="Timestamp" />
+        <column xsi:type="int" name="status" unsigned="true" nullable="false" comment="Status" />
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="customer_debit_id"/>
+        </constraint>
+    </table>
+    <table name="multisafepay_mirakl_customer_debit_order_line" resource="default" engine="innodb" comment="Mirakl Customer Debit Order Lines">
+        <column xsi:type="int" name="customer_debit_order_line_id" unsigned="true" nullable="false" identity="true" comment="ID" />
+        <column xsi:type="int" name="customer_debit_id" unsigned="true" nullable="false" comment="Customer Debit Request ID" />
+        <column xsi:type="varchar" name="offer_id" nullable="false" length="255" comment="Offer ID" />
+        <column xsi:type="decimal" name="order_line_amount" scale="2" nullable="false" comment="Order Line Amount" />
+        <column xsi:type="varchar" name="order_line_id" nullable="false" length="255" comment="Order Line ID" />
+        <column xsi:type="int" name="order_line_quantity" unsigned="true" nullable="false" comment="Order Line Quantity" />
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="customer_debit_order_line_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="MULTISAFEPAY_MIRAKL_CUSTOMER_DEBIT_ORDER_LINE_CUSTOMER_DEBIT_ID_MULTISAFEPAY_MIRAKL_CUSTOMER_DEBIT_CUSTOMER_DEBIT_ID" table="multisafepay_mirakl_customer_debit_order_line" column="customer_debit_id" referenceTable="multisafepay_mirakl_customer_debit" referenceColumn="customer_debit_id" onDelete="CASCADE"/>
+    </table>
+    <table name="multisafepay_mirakl_payout" resource="default" engine="innodb" comment="Mirakl Payout">
+        <column xsi:type="int" name="payout_id" unsigned="true" nullable="false" identity="true" comment="ID" />
+        <column xsi:type="int" name="store_id" unsigned="true" nullable="false" comment="Magento Store ID" />
+        <column xsi:type="int" name="shop_id" unsigned="true" nullable="false" comment="Mirakl Shop ID" />
+        <column xsi:type="varchar" name="order_commercial_id" nullable="false" length="255" comment="Magento Order ID" />
+        <column xsi:type="varchar" name="order_id" nullable="false" length="255" comment="Mirakl Order ID" />
+        <column xsi:type="timestamp" name="timestamp" nullable="false" default="CURRENT_TIMESTAMP" comment="Timestamp" />
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="payout_id"/>
+        </constraint>
+    </table>
+    <table name="multisafepay_mirakl_payout_order_line" resource="default" engine="innodb" comment="Mirakl Payout Order Lines">
+        <column xsi:type="int" name="payout_order_line_id" unsigned="true" nullable="false" identity="true" comment="ID" />
+        <column xsi:type="int" name="payout_id" unsigned="true" nullable="false" comment="Mirakl Order Line ID" />
+        <column xsi:type="decimal" name="product_price" scale="2" nullable="false" comment="Product Price" />
+        <column xsi:type="int" name="product_quantity" unsigned="true" nullable="false" comment="Product Quantity" />
+        <column xsi:type="decimal" name="product_taxes" scale="2" nullable="false" comment="Total Product Taxes" />
+        <column xsi:type="decimal" name="shipping_price" scale="2" nullable="false" comment="Shipping Price" />
+        <column xsi:type="decimal" name="shipping_taxes" scale="2" nullable="false" comment="Shipping Taxes" />
+        <column xsi:type="decimal" name="total_price_including_taxes" scale="2" nullable="false" comment="Total Price Tax Included" />
+        <column xsi:type="decimal" name="total_price_excluding_taxes" scale="2" nullable="false" comment="Total Price Tax Excluded" />
+        <column xsi:type="decimal" name="operator_amount" scale="2" nullable="false" comment="Operator Amount" />
+        <column xsi:type="decimal" name="seller_amount" scale="2" nullable="false" comment="Seller Amount" />
+        <column xsi:type="int" name="is_refunded" unsigned="true" default="0" nullable="false" comment="Is refunded?" />
+        <column xsi:type="int" name="mirakl_order_line_id" unsigned="true" nullable="false" comment="Mirakl Order Line ID" />
+        <column xsi:type="varchar" name="mirakl_order_status" nullable="false" length="255" comment="Mirakl Order Line Status" />
+        <column xsi:type="int" name="status" unsigned="true" nullable="false" comment="Status" />
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="payout_order_line_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="MULTISAFEPAY_MIRAKL_PAYOUT_ORDER_LINE_PAYOUT_ID_MULTISAFEPAY_MIRAKL_PAYOUT_PAYOUT_ID" table="multisafepay_mirakl_payout_order_line" column="payout_id" referenceTable="multisafepay_mirakl_payout" referenceColumn="payout_id" onDelete="CASCADE"/>
+    </table>
+</schema>

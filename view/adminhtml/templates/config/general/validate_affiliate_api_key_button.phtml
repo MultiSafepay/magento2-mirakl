@@ -1,0 +1,92 @@
+<?php
+/**
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is provided with Magento in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ *
+ * See DISCLAIMER.md for disclaimer details.
+ */
+
+declare(strict_types=1);
+
+// @codingStandardsIgnoreFile
+use \MultiSafepay\Mirakl\Block\Adminhtml\Config\ValidateAffiliateKeyButton;
+
+/** @var ValidateAffiliateKeyButton $block */
+/** @var Magento\Framework\View\TemplateEngine\Php $this */
+?>
+
+<?= /* @escapeNotVerified */ $block->getData('send_button') ?>
+
+<script type="text/javascript">
+    require([
+        'jquery',
+        'underscore',
+        'Magento_Ui/js/modal/alert',
+        'mage/translate'
+    ], function($, _, modalAlert, $t) {
+        let buttonId = '<?= /* @escapeNotVerified */ $block->getData('button_id'); ?>',
+            configPath = 'multisafepay_mirakl_multisafepay_mirakl_';
+
+        $('#' + buttonId).click(function (e) {
+            e.preventDefault();
+            showOrHideAjaxLoader('show');
+            validate();
+        });
+
+        function validate() {
+            var params = prepareSendParams(),
+                isValid = true;
+
+            _.each(params, function(data) {
+                if  (data === '' || data === undefined) {
+                    isValid = false;
+                }
+            });
+
+            if (isValid) {
+                $.ajax({
+                    url: '<?= /* @escapeNotVerified */ $block->getData('ajax_url'); ?>',
+                    data: params,
+                    dataType: 'json',
+                    success: function (result) {
+                        showOrHideAjaxLoader('hide');
+                        modalAlert({
+                            title: result.status ? $t('Success') : $t('Fail'),
+                            content: result.content
+                        });
+                    }
+                });
+            } else {
+                showOrHideAjaxLoader('hide');
+                modalAlert({
+                    title: $t('Validation Error'),
+                    content: $t('Please check if the fields are filled in correctly ')
+                });
+            }
+        }
+
+        function showOrHideAjaxLoader(action) {
+            $('body').loader(action);
+
+            return true;
+        }
+
+        /**
+         *
+         * @returns {{mode: (*|jQuery), apiKey: (*|jQuery)}}
+         */
+        function prepareSendParams() {
+            let mode = '<?= /* @escapeNotVerified */ $block->getData('mode'); ?>';
+
+            return {
+                mode: mode,
+                apiKey: $('#' + configPath + (mode === '0' ? 'affiliate_test_api_key' : 'affiliate_live_api_key')).val(),
+                storeId: "<?= /* @escapeNotVerified */ $block->getData('store_id'); ?>"
+            };
+        }
+    })
+</script>

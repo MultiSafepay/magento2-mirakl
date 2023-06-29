@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="MultiSafepay\Mirakl\Logger\Handler">
+        <arguments>
+            <argument name="filesystem" xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
+        </arguments>
+    </type>
+    <type name="MultiSafepay\Mirakl\Logger\Logger">
+        <arguments>
+            <argument name="name" xsi:type="string">Mirakl</argument>
+            <argument name="handlers"  xsi:type="array">
+                <item name="default" xsi:type="object">MultiSafepay\Mirakl\Logger\Handler</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="MultiSafepay\ConnectCore\Service\Process\SendOrderConfirmation">
+        <plugin name="multisafepay_mirakl_send_order_confirmation" type="MultiSafepay\Mirakl\Plugin\ConnectCore\Service\Process\SendOrderConfirmationPlugin" sortOrder="1" disabled="false" />
+    </type>
+    <type name="MultiSafepay\ConnectCore\Service\Process\CreateInvoice">
+        <plugin name="multisafepay_mirakl_create_invoice" type="MultiSafepay\Mirakl\Plugin\ConnectCore\Service\Process\CreateInvoicePlugin" sortOrder="1" disabled="false" />
+    </type>
+    <type name="MultiSafepay\ConnectCore\Model\Api\Builder\OrderRequestBuilder\ShoppingCartBuilder\OrderItemBuilder">
+        <plugin name="multisafepay_mirakl_merchant_item_id" type="MultiSafepay\Mirakl\Plugin\ConnectCore\Model\Api\Builder\OrderRequestBuilder\ShoppingCartBuilder\OrderItemBuilderPlugin" sortOrder="1" disabled="false" />
+    </type>
+</config>
+
+
+
