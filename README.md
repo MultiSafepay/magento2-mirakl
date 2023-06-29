@@ -59,7 +59,9 @@ php bin/magento cache:flush
 
 **In Magento:**
 - Browse to Stores > Settings > Configuration > MultiSafepay > Mirakl.
-- Fill the required data; according the environment setup in MultiSafepay general settings.
+  - Fill the required data; according the environment previously setup in MultiSafepay general settings.
+- Browse to Stores > Settings > Configuration > Mirakl > Connector.
+  - On "Order Workflow" section, in field "Trigger on Statuses", select "Closed" and "Processing".
 
 ## Support
 You can create issues on our repository. If you need any additional help or support, please contact <a href="mailto:integration@multisafepay.com">integration@multisafepay.com</a>
