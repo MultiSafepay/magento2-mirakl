@@ -20,6 +20,8 @@ use MultiSafepay\Sdk;
 class AffiliatesSdk extends Sdk
 {
     /**
+     * Return the AffiliatesManager object, used to process request related with affiliates
+     *
      * @return AffiliatesManager
      */
     public function getAffiliatesManager(): AffiliatesManager

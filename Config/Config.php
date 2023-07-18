@@ -28,6 +28,8 @@ class Config extends CoreConfig
     public const AFFILIATE_TEST_API_KEY = 'affiliate_test_api_key';
 
     /**
+     * Generic method to return config values from MultiSafepay Mirakl module
+     *
      * @param string $field
      * @param null $storeId
      * @return mixed
@@ -42,6 +44,8 @@ class Config extends CoreConfig
     }
 
     /**
+     * Return the affiliate API Key, according the selected environment
+     *
      * @param null $storeId
      * @return string
      * @throws Exception
@@ -54,14 +58,15 @@ class Config extends CoreConfig
     }
 
     /**
+     * Return the commission collecting account ID, according the selected environment
+     *
      * @param null $storeId
-     * @return string
-     * @throws Exception
+     * @return int
      */
-    public function getCollectingAccountId($storeId = null): string
+    public function getCollectingAccountId($storeId = null): int
     {
         return !$this->isLiveMode($storeId)
-            ? (string)$this->getMiraklValue(self::COLLECTING_TEST_ACCOUNT_ID, $storeId)
-            : (string)$this->getMiraklValue(self::COLLECTING_LIVE_ACCOUNT_ID, $storeId);
+            ? (int)$this->getMiraklValue(self::COLLECTING_TEST_ACCOUNT_ID, $storeId)
+            : (int)$this->getMiraklValue(self::COLLECTING_LIVE_ACCOUNT_ID, $storeId);
     }
 }

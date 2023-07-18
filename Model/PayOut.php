@@ -20,14 +20,17 @@ use MultiSafepay\Mirakl\Model\ResourceModel\PayOut as PayOutResourceModel;
 
 class PayOut extends AbstractModel
 {
-    public const PAYOUT_ID = 'payout_id';
     public const MAGENTO_SHOP_ID = 'store_id';
     public const MIRAKL_SHOP_ID = 'shop_id';
     public const MAGENTO_ORDER_ID = 'order_commercial_id';
     public const MIRAKL_ORDER_ID = 'order_id';
+    public const MIRAKL_CURRENCY_ISO_CODE = 'currency_iso_code';
     public const TIMESTAMP = 'timestamp';
     public const ORDER_LINES = 'order_lines';
 
+    /**
+     * @return void
+     */
     public function _construct()
     {
         $this->_init(PayoutResourceModel::class);
@@ -99,6 +102,23 @@ class PayOut extends AbstractModel
     public function setMiraklOrderId(string $miraklOrderId): PayOut
     {
         return $this->setData(self::MIRAKL_ORDER_ID, $miraklOrderId);
+    }
+
+    /**
+     * @return string
+     */
+    public function getMiraklCurrencyIsoCode(): string
+    {
+        return (string)$this->getData(self::MIRAKL_CURRENCY_ISO_CODE);
+    }
+
+    /**
+     * @param string $miraklCurrencyIsoCode
+     * @return PayOut
+     */
+    public function setMiraklCurrencyIsoCode(string $miraklCurrencyIsoCode): PayOut
+    {
+        return $this->setData(self::MIRAKL_CURRENCY_ISO_CODE, $miraklCurrencyIsoCode);
     }
 
     /**

@@ -37,6 +37,8 @@ class FundRequest extends RequestBody
     private $description;
 
     /**
+     * Return the info set in this object as array, removing those properties previously set as null
+     *
      * @return array
      */
     public function getData(): array
@@ -53,6 +55,8 @@ class FundRequest extends RequestBody
     }
 
     /**
+     * Add Order ID
+     *
      * @param string $orderId
      * @return FundRequest
      */
@@ -63,6 +67,8 @@ class FundRequest extends RequestBody
     }
 
     /**
+     * Get Order ID
+     *
      * @return string
      */
     public function getOrderId(): string
@@ -71,6 +77,8 @@ class FundRequest extends RequestBody
     }
 
     /**
+     * Add Money
+     *
      * @param Money $money
      * @return FundRequest
      */
@@ -81,6 +89,8 @@ class FundRequest extends RequestBody
     }
 
     /**
+     * Add Description
+     *
      * @param Description $description
      * @return FundRequest
      */
@@ -91,6 +101,8 @@ class FundRequest extends RequestBody
     }
 
     /**
+     * Add Description as a string
+     *
      * @param string $description
      * @return FundRequest
      */

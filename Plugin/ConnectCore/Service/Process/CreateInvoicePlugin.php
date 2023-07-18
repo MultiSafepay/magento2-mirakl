@@ -15,13 +15,12 @@ declare(strict_types=1);
 namespace MultiSafepay\Mirakl\Plugin\ConnectCore\Service\Process;
 
 use Magento\Sales\Api\Data\OrderInterface;
-use MultiSafepay\ConnectCore\Service\Transaction\StatusOperation\StatusOperationInterface;
 use MultiSafepay\ConnectCore\Service\Process\CreateInvoice;
+use MultiSafepay\ConnectCore\Service\Transaction\StatusOperation\StatusOperationInterface;
 use MultiSafepay\Mirakl\Util\ShoppingCartUtil;
 
 class CreateInvoicePlugin
 {
-
     /**
      * @var ShoppingCartUtil
      */
@@ -37,6 +36,8 @@ class CreateInvoicePlugin
     }
 
     /**
+     * Skip the invoice process when the order only contains products from sellers
+     *
      * @param CreateInvoice $createInvoice
      * @param callable $proceed
      * @param OrderInterface $order
@@ -51,8 +52,9 @@ class CreateInvoicePlugin
         OrderInterface $order,
         array $transaction
     ): array {
-        // If the order only contains products from sellers, this step must be skipped.
-        if (!$this->shoppingCartUtil->hasOperatorMiraklProducts($order->getItems()) &&
+        // If the order only contains products from sellers, this step must be skipped;
+        // because $order->canInvoice() will return false, and that will stop the notification process
+        if (!$this->shoppingCartUtil->hasMiraklOperatorProducts($order->getItems()) &&
             !$this->shoppingCartUtil->isMixedShoppingCart($order->getItems())) {
             return [StatusOperationInterface::SUCCESS_PARAMETER => true];
         }

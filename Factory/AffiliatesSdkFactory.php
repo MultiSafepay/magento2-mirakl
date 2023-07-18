@@ -16,15 +16,13 @@ namespace MultiSafepay\Mirakl\Factory;
 
 use Exception;
 use MultiSafepay\ConnectCore\Client\Client;
-use MultiSafepay\ConnectCore\Config\Config;
-use MultiSafepay\Mirakl\Config\Config as MiraklConfig;
 use MultiSafepay\ConnectCore\Factory\SdkFactory;
 use MultiSafepay\Mirakl\Api\MultiSafepay\Sdk\AffiliatesSdk;
+use MultiSafepay\Mirakl\Config\Config;
 use Nyholm\Psr7\Factory\Psr17Factory;
 
 class AffiliatesSdkFactory extends SdkFactory
 {
-
     /**
      * @var Config
      */
@@ -41,23 +39,18 @@ class AffiliatesSdkFactory extends SdkFactory
     protected $psr17Factory;
 
     /**
-     * @var MiraklConfig
-     */
-    protected $miraklConfig;
-
-    /**
-     * Client constructor.
+     * AffiliatesSdkFactory constructor.
      *
      * @param Config $config
      * @param Client $client
      */
     public function __construct(
         Config $config,
-        Client $client,
-        MiraklConfig $miraklConfig
+        Client $client
     ) {
+        $this->config = $config;
+        $this->client = $client;
         parent::__construct($config, $client);
-        $this->miraklConfig = $miraklConfig;
     }
 
     /**
@@ -70,7 +63,7 @@ class AffiliatesSdkFactory extends SdkFactory
     public function createAffiliatesSdk(int $storeId = null): AffiliatesSdk
     {
         return new AffiliatesSdk(
-            $this->miraklConfig->getAffiliateApiKey($storeId),
+            $this->config->getAffiliateApiKey($storeId),
             $this->config->isLiveMode($storeId),
             $this->client,
             $this->psr17Factory,

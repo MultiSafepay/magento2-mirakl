@@ -48,7 +48,7 @@ class OrderRequestObserver implements ObserverInterface
     }
 
     /**
-     * Hook into the order request event and log the details of the shopping cart.
+     * Log the details of the shopping cart, and add plugin meta info in the order request
      *
      * @param  Observer $observer
      * @throws Exception
@@ -76,10 +76,15 @@ class OrderRequestObserver implements ObserverInterface
         $pluginDetails->addApplicationName($applicationName . ' - Mirakl');
 
         $miraklModuleVersion = 'unknown';
+        $multiSafepayMiraklVersion = 'unknown';
 
         if (method_exists('\Composer\InstalledVersions', 'getVersion')) {
             $miraklModuleVersion = \Composer\InstalledVersions::getVersion('mirakl/connector-magento2-plugin');
+            $multiSafepayMiraklVersion = \Composer\InstalledVersions::getVersion('multisafepay/magento2-mirakl');
         }
+
+        $pluginVersion = $pluginDetails->getPluginVersion()->getPluginVersion();
+        $pluginDetails->addPluginVersion($pluginVersion . ' - ' . $multiSafepayMiraklVersion);
 
         $applicationVersion = $pluginDetails->getApplicationVersion();
         $pluginDetails->addApplicationVersion($applicationVersion . ' - ' . $miraklModuleVersion);

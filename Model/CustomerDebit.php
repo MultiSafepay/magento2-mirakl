@@ -31,6 +31,9 @@ class CustomerDebit extends AbstractModel
     public const STATUS = 'status';
     public const ORDER_LINES = 'order_lines';
 
+    /**
+     * @return void
+     */
     public function _construct()
     {
         $this->_init(CustomerDebitResourceModel::class);

@@ -20,6 +20,9 @@ use MultiSafepay\Mirakl\Model\ResourceModel\PayOut as PayOutResourceModel;
 
 class Collection extends AbstractCollection
 {
+    /**
+     * @return void
+     */
     public function _construct()
     {
         $this->_init(
@@ -32,13 +35,16 @@ class Collection extends AbstractCollection
      * @param string $miraklOrderId
      * @return $this
      */
-    public function filterByMiraklOrderId(string $miraklOrderId)
+    public function filterByMiraklOrderId(string $miraklOrderId): Collection
     {
         $this->addFieldToFilter(PayOut::MIRAKL_ORDER_ID, $miraklOrderId);
         return $this;
     }
 
-    public function withOrderLines()
+    /**
+     * @return $this
+     */
+    public function withOrderLines(): Collection
     {
         // phpcs:disable
         $this->getSelect()->joinLeft(

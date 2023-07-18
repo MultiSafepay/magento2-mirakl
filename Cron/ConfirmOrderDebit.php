@@ -18,7 +18,7 @@ use MultiSafepay\Mirakl\Cron\Process\ConfirmPayment;
 use MultiSafepay\Mirakl\Cron\Process\SavePayOutData;
 use MultiSafepay\Mirakl\Cron\Process\SendOrderDebitConfirmation;
 use MultiSafepay\Mirakl\Cron\Process\SetCustomerDebitAsProcessed;
-use MultiSafepay\Mirakl\Cron\Process\TransferFunds;
+use MultiSafepay\Mirakl\Cron\Process\ProcessFunds;
 use MultiSafepay\Mirakl\Logger\Logger;
 use MultiSafepay\Mirakl\Model\CustomerDebitFactory;
 use MultiSafepay\Mirakl\Model\ResourceModel\CustomerDebit\Collection;
@@ -47,9 +47,9 @@ class ConfirmOrderDebit
     private $savePayOutData;
 
     /**
-     * @var TransferFunds
+     * @var ProcessFunds
      */
-    private $transferFunds;
+    private $processFunds;
 
     /**
      * @var SendOrderDebitConfirmation
@@ -70,7 +70,7 @@ class ConfirmOrderDebit
      * @param CustomerDebitCollectionFactory $customerDebitCollectionFactory
      * @param ConfirmPayment $confirmPayment
      * @param SavePayOutData $savePayOutData
-     * @param TransferFunds $transferFunds
+     * @param ProcessFunds $processFunds
      * @param SendOrderDebitConfirmation $sendOrderDebitConfirmation
      * @param SetCustomerDebitAsProcessed $setCustomerDebitAsProcessed
      * @param Logger $logger
@@ -79,7 +79,7 @@ class ConfirmOrderDebit
         CustomerDebitCollectionFactory $customerDebitCollectionFactory,
         ConfirmPayment $confirmPayment,
         SavePayOutData $savePayOutData,
-        TransferFunds $transferFunds,
+        ProcessFunds $processFunds,
         SendOrderDebitConfirmation $sendOrderDebitConfirmation,
         SetCustomerDebitAsProcessed $setCustomerDebitAsProcessed,
         Logger $logger
@@ -87,7 +87,7 @@ class ConfirmOrderDebit
         $this->customerDebitCollectionFactory = $customerDebitCollectionFactory;
         $this->confirmPayment = $confirmPayment;
         $this->savePayOutData = $savePayOutData;
-        $this->transferFunds = $transferFunds;
+        $this->processFunds = $processFunds;
         $this->sendOrderDebitConfirmation = $sendOrderDebitConfirmation;
         $this->setCustomerDebitAsProcessed = $setCustomerDebitAsProcessed;
         $this->logger = $logger;
@@ -104,7 +104,7 @@ class ConfirmOrderDebit
         $processes = [
             $this->confirmPayment,
             $this->savePayOutData,
-            $this->transferFunds,
+            $this->processFunds,
             $this->sendOrderDebitConfirmation,
             $this->setCustomerDebitAsProcessed
         ];

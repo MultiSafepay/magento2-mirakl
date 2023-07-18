@@ -21,7 +21,6 @@ use MultiSafepay\Mirakl\Util\ShoppingCartUtil;
 
 class SendOrderConfirmationPlugin
 {
-
     /**
      * @var ShoppingCartUtil
      */
@@ -37,6 +36,8 @@ class SendOrderConfirmationPlugin
     }
 
     /**
+     * Skip the process to send the order confirmation email when the order contains products from sellers
+     *
      * @param SendOrderConfirmation $sendOrderConfirmation
      * @param callable $proceed
      * @param OrderInterface $order

@@ -18,6 +18,9 @@ use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
 
 class PayOutOrderLine extends AbstractDb
 {
+    /**
+     * @return void
+     */
     public function _construct()
     {
         $this->_init('multisafepay_mirakl_payout_order_line', 'payout_order_line_id');

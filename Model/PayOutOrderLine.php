@@ -36,6 +36,9 @@ class PayOutOrderLine extends AbstractModel
     public const MIRAKL_ORDER_STATUS = 'mirakl_order_status';
     public const STATUS = 'status';
 
+    /**
+     * @return void
+     */
     public function _construct()
     {
         $this->_init(PayOutOrderLineResourceModel::class);

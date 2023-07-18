@@ -20,6 +20,9 @@ use MultiSafepay\Mirakl\Model\ResourceModel\PayOutOrderLine as PayOutOrderLineRe
 
 class Collection extends AbstractCollection
 {
+    /**
+     * @return void
+     */
     public function _construct()
     {
         $this->_init(

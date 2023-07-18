@@ -14,11 +14,36 @@ declare(strict_types=1);
 
 namespace MultiSafepay\Mirakl\Logger;
 
+use DateTimeZone;
 use Mirakl\MMP\FrontOperator\Domain\Collection\Order\OrderCollection;
 use MultiSafepay\ConnectCore\Logger\Logger as CoreLogger;
+use MultiSafepay\ConnectCore\Util\JsonHandler;
 
 class Logger extends CoreLogger
 {
+    /**
+     * @var JsonHandler
+     */
+    private $jsonHandler;
+
+    /**
+     * @param string $name
+     * @param JsonHandler $jsonHandler
+     * @param array $handlers
+     * @param array $processors
+     * @param DateTimeZone|null $timezone
+     */
+    public function __construct(
+        string $name,
+        JsonHandler $jsonHandler,
+        array $handlers = [],
+        array $processors = [],
+        ?DateTimeZone $timezone = null
+    ) {
+        parent::__construct($name, $handlers, $processors, $timezone);
+        $this->jsonHandler = $jsonHandler;
+    }
+
     /**
      * Log the shopping cart details when the order contains products that belongs to a seller
      *
@@ -30,11 +55,11 @@ class Logger extends CoreLogger
         $message = '';
 
         foreach ($shoppingCart as $shoppingCartItem) {
-            $message .= json_encode($shoppingCartItem->getData());
+            $message .= $this->jsonHandler->convertToJSON($shoppingCartItem->getData());
         }
 
         $this->addRecord(
-            self::INFO,
+            self::DEBUG,
             $message
         );
     }
@@ -110,7 +135,7 @@ class Logger extends CoreLogger
             self::INFO,
             sprintf(
                 'Mirakl order retrieve using the API: %1$s',
-                json_encode($miraklOrder->toArray())
+                $this->jsonHandler->convertToJSON($miraklOrder->toArray())
             )
         );
     }

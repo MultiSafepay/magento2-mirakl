@@ -19,8 +19,10 @@ use Mirakl\MMP\FrontOperator\Request\Order\GetOrdersRequest;
 class OrderRequest
 {
     /**
+     * Return a GetOrdersRequest object
+     *
      * @param string $orderId
-     * @return MiraklGetOrdersRequest
+     * @return GetOrdersRequest
      */
     public function getById(string $orderId): GetOrdersRequest
     {

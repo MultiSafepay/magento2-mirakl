@@ -14,8 +14,7 @@ declare(strict_types=1);
 
 namespace MultiSafepay\Mirakl\Cron\Process;
 
-use MultiSafepay\ConnectCore\Factory\SdkFactory;
-use MultiSafepay\ConnectCore\Util\OrderUtil;
+use Exception;
 use MultiSafepay\Mirakl\Cron\ProcessInterface;
 use MultiSafepay\Mirakl\Logger\Logger;
 use MultiSafepay\Mirakl\Api\Mirakl\Request\ConfirmOrderDebitRequest;
@@ -23,16 +22,6 @@ use MultiSafepay\Mirakl\Api\Mirakl\Client\FrontApiClient as MiraklFrontApiClient
 
 class SendOrderDebitConfirmation implements ProcessInterface
 {
-    /**
-     * @var OrderUtil;
-     */
-    private $orderUtil;
-
-    /**
-     * @var SdkFactory;
-     */
-    private $sdkFactory;
-
     /**
      * @var MiraklFrontApiClient
      */
@@ -49,33 +38,33 @@ class SendOrderDebitConfirmation implements ProcessInterface
     private $logger;
 
     /**
-     * @param OrderUtil $orderUtil
-     * @param SdkFactory $sdkFactory
      * @var MiraklFrontApiClient $miraklFrontApiClient
      * @var ConfirmOrderDebitRequest $confirmOrderDebitRequest
      * @param Logger $logger
      */
     public function __construct(
-        OrderUtil $orderUtil,
-        SdkFactory $sdkFactory,
         MiraklFrontApiClient $miraklFrontApiClient,
         ConfirmOrderDebitRequest $confirmOrderDebitRequest,
         Logger $logger
     ) {
-        $this->orderUtil = $orderUtil;
-        $this->sdkFactory = $sdkFactory;
         $this->miraklFrontApiClient = $miraklFrontApiClient;
         $this->confirmOrderDebitRequest = $confirmOrderDebitRequest;
         $this->logger = $logger;
     }
 
+    /**
+     * Send a request to Mirakl API to confirm the order debit
+     *
+     * @param array $orderDebitData
+     * @return array|true[]
+     */
     public function execute(array $orderDebitData): array
     {
         try {
             $miraklFrontApiClient = $this->miraklFrontApiClient->get();
             $miraklConfirmOrderDebitRequest = $this->confirmOrderDebitRequest->get($orderDebitData);
             $miraklFrontApiClient->confirmOrderDebit($miraklConfirmOrderDebitRequest);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $this->logger->logException($exception);
             return [
                 ProcessInterface::SUCCESS_PARAMETER => false,

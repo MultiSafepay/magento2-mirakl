@@ -33,6 +33,7 @@
         <column xsi:type="int" name="shop_id" unsigned="true" nullable="false" comment="Mirakl Shop ID" />
         <column xsi:type="varchar" name="order_commercial_id" nullable="false" length="255" comment="Magento Order ID" />
         <column xsi:type="varchar" name="order_id" nullable="false" length="255" comment="Mirakl Order ID" />
+        <column xsi:type="varchar" name="currency_iso_code" length="3" nullable="false" comment="Currency ISO code" />
         <column xsi:type="timestamp" name="timestamp" nullable="false" default="CURRENT_TIMESTAMP" comment="Timestamp" />
         <constraint xsi:type="primary" referenceId="PRIMARY">
             <column name="payout_id"/>

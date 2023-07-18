@@ -15,14 +15,14 @@ This module does not work in combination with Magento Vault yet. Please disable 
 
 ## Requirements
 - To use the plugin you need a MultiSafepay account. You can create a test account on https://testmerchant.multisafepay.com/signup
-- Magento Open Source version 2.3.x & 2.4.x
+- Magento Open Source version 2.4.x
 - Mirakl
 - PHP 7.4+
 
 ## Installation
 This module can be installed via composer:
 
-```shell
+```bash
 composer require multisafepay/magento2-mirakl
 ```
 
@@ -32,7 +32,7 @@ php bin/magento module:enable MultiSafepay_Mirakl
 ```
 
 Next, run the following commands:
-```shell
+```bash
 php bin/magento setup:upgrade
 php bin/magento setup:di:compile
 php bin/magento cache:flush

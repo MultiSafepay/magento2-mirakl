@@ -27,7 +27,7 @@ class ShoppingCartUtil
     public function hasMiraklSellerProducts(array $shoppingCartItems): bool
     {
         foreach ($shoppingCartItems as $shoppingCartItem) {
-            if ('null' !== $shoppingCartItem->getMiraklShopId()) {
+            if ($shoppingCartItem->hasMiraklShopId()) {
                 return true;
             }
         }
@@ -36,15 +36,15 @@ class ShoppingCartUtil
     }
 
     /**
-     * Returns true if the shopping cart provided contains non Mirakl products
+     * Returns true if the shopping cart provided does not contain Mirakl products
      *
      * @param  OrderItemInterface[] $shoppingCartItems
      * @return bool
      */
-    public function hasOperatorMiraklProducts(array $shoppingCartItems): bool
+    public function hasMiraklOperatorProducts(array $shoppingCartItems): bool
     {
         foreach ($shoppingCartItems as $shoppingCartItem) {
-            if (null === $shoppingCartItem->getMiraklShopId()) {
+            if (!$shoppingCartItem->hasMiraklShopId()) {
                 return true;
             }
         }
@@ -60,11 +60,7 @@ class ShoppingCartUtil
      */
     public function isMixedShoppingCart(array $shoppingCartItems): bool
     {
-        if ($this->hasMiraklSellerProducts($shoppingCartItems) &&
-            $this->hasOperatorMiraklProducts($shoppingCartItems)) {
-            return true;
-        }
-
-        return false;
+        return $this->hasMiraklSellerProducts($shoppingCartItems) &&
+            $this->hasMiraklOperatorProducts($shoppingCartItems);
     }
 }

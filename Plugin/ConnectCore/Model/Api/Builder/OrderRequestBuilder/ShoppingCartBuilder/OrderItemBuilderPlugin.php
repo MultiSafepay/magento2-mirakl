@@ -19,9 +19,8 @@ use MultiSafepay\ConnectCore\Model\Api\Builder\OrderRequestBuilder\ShoppingCartB
 
 class OrderItemBuilderPlugin
 {
-
     /**
-     * Append to the Merchant Item Id, the Mirakl Shop Id
+     * Append to the Merchant Item ID, the Mirakl Shop ID
      *
      * @param OrderItemBuilder $orderItemBuilder
      * @param string $result
@@ -35,9 +34,10 @@ class OrderItemBuilderPlugin
         string $result,
         OrderItemInterface $item
     ): string {
-        if (null !== $item->getMiraklShopId()) {
+        if ($item->hasMiraklShopId()) {
             return $result . '-' . $item->getMiraklShopId();
         }
+
         return $result;
     }
 }

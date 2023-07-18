@@ -19,6 +19,8 @@ use Mirakl\MMP\FrontOperator\Request\Shop\GetShopsRequest;
 class ShopRequest
 {
     /**
+     * Return a GetShopsRequest object
+     *
      * @param int $shop_id
      * @return GetShopsRequest
      */

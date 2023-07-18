@@ -21,6 +21,8 @@ class ConfirmOrderDebitRequest
 {
 
     /**
+     * Return a MiraklConfirmOrderDebitRequest object
+     *
      * @param array $debitRequestData
      * @return MiraklConfirmOrderDebitRequest
      */
@@ -30,11 +32,12 @@ class ConfirmOrderDebitRequest
     }
 
     /**
+     * Build the arguments required to construct a MiraklConfirmOrderDebitRequest
+     *
      * @param array $debitRequestData
-     * @param string $pspId
      * @return array
      */
-    private function getOrderDebitRequestData(array $debitRequestData, string $pspId = '0312'): array
+    private function getOrderDebitRequestData(array $debitRequestData): array
     {
         $orderDebitRequest[] = [
             "amount" => $debitRequestData[CustomerDebit::AMOUNT],
@@ -45,9 +48,7 @@ class ConfirmOrderDebitRequest
                 "type" => $debitRequestData[CustomerDebit::DEBIT_ENTITY_TYPE]
             ],
             "order_id" => $debitRequestData[CustomerDebit::ORDER_ID],
-            "payment_status" => "OK",
-            "transaction_date" => date('Y-m-d\TH:i:sP'),
-            "transaction_number" => $pspId
+            "payment_status" => "OK"
         ];
         return $orderDebitRequest;
     }

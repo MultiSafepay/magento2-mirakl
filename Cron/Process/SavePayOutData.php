@@ -16,61 +16,19 @@ namespace MultiSafepay\Mirakl\Cron\Process;
 
 use Magento\Framework\Exception\AlreadyExistsException;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Mirakl\MMP\FrontOperator\Domain\Collection\Order\OrderCollection;
-use Mirakl\MMP\FrontOperator\Domain\Order as MiraklOrder;
-use Mirakl\MMP\FrontOperator\Domain\Order\OrderLine;
-use MultiSafepay\ConnectCore\Util\OrderUtil;
-use MultiSafepay\Mirakl\Api\Mirakl\Client\FrontApiClient as MiraklFrontApiClient;
-use MultiSafepay\Mirakl\Api\Mirakl\Request\OrderRequest as OrderRequestFactory;
+use MultiSafepay\Mirakl\Cron\Process\SavePayOutData\SavePayOut;
+use MultiSafepay\Mirakl\Cron\Process\SavePayOutData\SavePayOutOrderLines;
 use MultiSafepay\Mirakl\Cron\ProcessInterface;
 use MultiSafepay\Mirakl\Logger\Logger;
 use MultiSafepay\Mirakl\Model\CustomerDebit;
-use MultiSafepay\Mirakl\Model\PayOut;
 use MultiSafepay\Mirakl\Model\PayOutFactory;
-use MultiSafepay\Mirakl\Model\PayOutOrderLine;
 use MultiSafepay\Mirakl\Model\PayOutOrderLineFactory;
-use MultiSafepay\Mirakl\Model\ResourceModel\PayOut as PayOutResourceModel;
-use MultiSafepay\Mirakl\Model\ResourceModel\PayOutOrderLine as PayOutOrderLineResourceModel;
 use MultiSafepay\Mirakl\Model\ResourceModel\PayOut\Collection;
 use MultiSafepay\Mirakl\Model\ResourceModel\PayOut\CollectionFactory as PayOutCollectionFactory;
+use MultiSafepay\Mirakl\Util\MiraklOrderUtil;
 
 class SavePayOutData implements ProcessInterface
 {
-    /**
-     * @var OrderUtil;
-     */
-    private $orderUtil;
-
-    /**
-     * @var OrderRequestFactory
-     */
-    private $orderRequestFactory;
-
-    /**
-     * @var MiraklFrontApiClient
-     */
-    private $miraklFrontApiClient;
-
-    /**
-     * @var PayOutFactory
-     */
-    private $payOutFactory;
-
-    /**
-     * @var PayOutResourceModel
-     */
-    private $payOutResourceModel;
-
-    /**
-     * @var PayOutOrderLineFactory
-     */
-    private $payOutOrderLineFactory;
-
-    /**
-     * @var PayOutOrderLineResourceModel
-     */
-    private $payOutOrderLineResourceModel;
-
     /**
      * @var PayOutCollectionFactory
      */
@@ -82,195 +40,85 @@ class SavePayOutData implements ProcessInterface
     private $logger;
 
     /**
-     * @param OrderUtil $orderUtil
-     * @param OrderRequestFactory $orderRequestFactory
-     * @param MiraklFrontApiClient $miraklFrontApiClient
-     * @param PayOutFactory $payOutFactory
-     * @param PayOutResourceModel $payOutResourceModel
-     * @param PayOutOrderLineFactory $payOutOrderLineFactory
-     * @param PayOutOrderLineResourceModel $payOutOrderLineResourceModel
+     * @var MiraklOrderUtil
+     */
+    private $miraklOrderUtil;
+
+    /**
+     * @var SavePayOut
+     */
+    private $savePayOut;
+
+    /**
+     * @var SavePayOutOrderLines
+     */
+    private $savePayOutOrderLines;
+
+    /**
      * @param PayOutCollectionFactory $payOutCollectionFactory
      * @param Logger $logger
+     * @param MiraklOrderUtil $miraklOrderUtil
+     * @param SavePayOut $savePayOut
+     * @param SavePayOutOrderLines $savePayOutOrderLines
      */
     public function __construct(
-        OrderUtil $orderUtil,
-        OrderRequestFactory $orderRequestFactory,
-        MiraklFrontApiClient $miraklFrontApiClient,
-        PayOutFactory $payOutFactory,
-        PayOutResourceModel $payOutResourceModel,
-        PayOutOrderLineFactory $payOutOrderLineFactory,
-        PayOutOrderLineResourceModel $payOutOrderLineResourceModel,
         PayOutCollectionFactory $payOutCollectionFactory,
-        Logger $logger
+        Logger $logger,
+        MiraklOrderUtil $miraklOrderUtil,
+        SavePayOut $savePayOut,
+        SavePayOutOrderLines $savePayOutOrderLines
     ) {
-        $this->orderUtil = $orderUtil;
-        $this->orderRequestFactory = $orderRequestFactory;
-        $this->miraklFrontApiClient = $miraklFrontApiClient;
-        $this->payOutFactory = $payOutFactory;
-        $this->payOutResourceModel = $payOutResourceModel;
-        $this->payOutOrderLineFactory = $payOutOrderLineFactory;
-        $this->payOutOrderLineResourceModel = $payOutOrderLineResourceModel;
         $this->payOutCollectionFactory = $payOutCollectionFactory;
         $this->logger = $logger;
+        $this->miraklOrderUtil = $miraklOrderUtil;
+        $this->savePayOut = $savePayOut;
+        $this->savePayOutOrderLines = $savePayOutOrderLines;
     }
 
     /**
+     * Getting the Magento order, and the Mirakl order to save the details about the payout in the database
+     *
      * @param array $orderDebitData
      * @return array|true[]
      */
     public function execute(array $orderDebitData): array
     {
-        // Getting the Magento Order
+        $miraklOrder = $this->miraklOrderUtil->getById($orderDebitData[CustomerDebit::ORDER_ID]);
+
+        if ($this->hasPayOutRecord($miraklOrder->getId())) {
+            return [ProcessInterface::SUCCESS_PARAMETER => true];
+        }
+
         try {
-            $order = $this->orderUtil->getOrderByIncrementId(
+            $miraklPayOut = $this->savePayOut->execute(
+                $miraklOrder,
                 $orderDebitData[CustomerDebit::ORDER_COMMERCIAL_ID]
             );
-        } catch (NoSuchEntityException $noSuchEntityException) {
+        } catch (AlreadyExistsException | NoSuchEntityException $exception) {
             return [
                 ProcessInterface::SUCCESS_PARAMETER => false,
-                ProcessInterface::MESSAGE_PARAMETER => $noSuchEntityException->getMessage()
+                ProcessInterface::MESSAGE_PARAMETER => $exception->getMessage()
             ];
         }
 
         try {
-            $miraklOrders = $this->getMiraklOrder(
-                $orderDebitData[CustomerDebit::ORDER_ID]
+            $this->savePayOutOrderLines->execute(
+                $miraklOrder->getOrderLines()->getItems(),
+                (int)$miraklPayOut->getId()
             );
-        } catch (NoSuchEntityException $noSuchEntityException) {
+        } catch (AlreadyExistsException $exception) {
             return [
                 ProcessInterface::SUCCESS_PARAMETER => false,
-                ProcessInterface::MESSAGE_PARAMETER => $noSuchEntityException->getMessage()
+                ProcessInterface::MESSAGE_PARAMETER => $exception->getMessage()
             ];
-        }
-
-        /** @var MiraklOrder $miraklOrder */
-        foreach ($miraklOrders->getItems() as $miraklOrder) {
-            if (!$this->hasPayOutRecord($miraklOrder->getId())) {
-
-                try {
-                    $miraklPayOut = $this->saveMiraklOrderPayOut($miraklOrder, (int)$order->getStoreId());
-                } catch (AlreadyExistsException $alreadyExistsException) {
-                    return [
-                        ProcessInterface::SUCCESS_PARAMETER => false,
-                        ProcessInterface::MESSAGE_PARAMETER => $alreadyExistsException->getMessage()
-                    ];
-                }
-
-                /** @var OrderLine $orderLine */
-                foreach ($miraklOrder->getOrderLines()->getItems() as $orderLine) {
-                    try {
-                        $this->saveMiraklOrderLinePayOut(
-                            $orderLine,
-                            (int)$miraklPayOut->getId()
-                        );
-                    } catch (AlreadyExistsException $alreadyExistsException) {
-                        return [
-                            ProcessInterface::SUCCESS_PARAMETER => false,
-                            ProcessInterface::MESSAGE_PARAMETER => $alreadyExistsException->getMessage()
-                        ];
-                    }
-                }
-            }
         }
 
         return [ProcessInterface::SUCCESS_PARAMETER => true];
     }
 
     /**
-     * @param MiraklOrder $miraklOrder
-     * @param int $store_id
-     * @return PayOut
-     * @throws AlreadyExistsException
-     */
-    private function saveMiraklOrderPayOut(MiraklOrder $miraklOrder, int $store_id): PayOut
-    {
-        /** @var PayOut $payOut */
-        $payOut = $this->payOutFactory->create();
-        $payOut->setMagentoShopId($store_id);
-        $payOut->setMiraklShopId($miraklOrder->getShopId());
-        $payOut->setMagentoOrderId($miraklOrder->getCommercialId());
-        $payOut->setMiraklOrderId($miraklOrder->getId());
-
-        $this->payOutResourceModel->save($payOut);
-
-        return $payOut;
-    }
-
-    /**
-     * @param OrderLine $orderLine
-     * @param int $payOutId
-     * @return PayOutOrderLine
-     * @throws AlreadyExistsException
-     */
-    public function saveMiraklOrderLinePayOut(OrderLine $orderLine, int $payOutId): PayOutOrderLine
-    {
-        $totalTaxes = $this->getTaxesFromOrderLine($orderLine);
-        $totalShippingTaxes = $this->getShippingTaxesFromOrderLine($orderLine);
-        $totalPriceIncludingTaxes = $orderLine->getTotalPrice() + $totalTaxes + $totalShippingTaxes;
-        $commission = $orderLine->getCommission()->getTotal();
-        $sellerAmount = $totalPriceIncludingTaxes - $orderLine->getCommission()->getTotal();
-        $pricePerProduct = $orderLine->getPrice() / $orderLine->getQuantity();
-
-        /** @var PayOutOrderLine $payOutOrderLine */
-        $payOutOrderLine = $this->payOutOrderLineFactory->create();
-        $payOutOrderLine->setPayoutId($payOutId);
-        $payOutOrderLine->setProductPrice($pricePerProduct);
-        $payOutOrderLine->setProductQuantity($orderLine->getQuantity());
-        $payOutOrderLine->setProductTaxes($this->getTaxesFromOrderLine($orderLine));
-        $payOutOrderLine->setShippingPrice($orderLine->getShippingPrice());
-        $payOutOrderLine->setShippingTaxes($this->getShippingTaxesFromOrderLine($orderLine));
-        $payOutOrderLine->setTotalPriceIncludingTaxes($totalPriceIncludingTaxes);
-        $payOutOrderLine->setTotalPriceExcludingTaxes($orderLine->getTotalPrice());
-        $payOutOrderLine->setOperatorAmount($commission);
-        $payOutOrderLine->setSellerAmount($sellerAmount);
-        $payOutOrderLine->setMiraklOrderStatus($orderLine->getStatus()->getState() ?? '');
-        $payOutOrderLine->setStatus(1);
-        $payOutOrderLine->setMiraklOrderLineId((int)$orderLine->getId());
-
-        $this->payOutOrderLineResourceModel->save($payOutOrderLine);
-
-        return $payOutOrderLine;
-    }
-
-    /**
-     * @param $miraklOrderId
-     * @return OrderCollection
-     * @throws NoSuchEntityException
-     */
-    private function getMiraklOrder($miraklOrderId): OrderCollection
-    {
-        try {
-            $miraklGetOrderRequest = $this->orderRequestFactory->getById($miraklOrderId);
-            $miraklFrontApiClient = $this->miraklFrontApiClient->get();
-            $miraklOrder = $miraklFrontApiClient->getOrders($miraklGetOrderRequest);
-        } catch (\Exception $exception) {
-            throw new NoSuchEntityException(__('Requested order doesn\'t exist'));
-        }
-
-        return $miraklOrder;
-    }
-
-    private function getTaxesFromOrderLine(OrderLine $orderLine): float
-    {
-        $taxes = 0;
-        foreach ($orderLine->getTaxes() as $tax) {
-            $taxes += (float)$tax->getAmount();
-        }
-
-        return $taxes;
-    }
-
-    private function getShippingTaxesFromOrderLine(OrderLine $orderLine): float
-    {
-        $taxes = 0;
-        foreach ($orderLine->getShippingTaxes()->getItems() as $tax) {
-            $taxes += (float)$tax->getAmount();
-        }
-
-        return $taxes;
-    }
-
-    /**
+     * Check if the payout record was saved previously to prevent save it twice
+     *
      * @param string $miraklOrderId
      * @return bool
      */
@@ -280,9 +128,10 @@ class SavePayOutData implements ProcessInterface
         $payOutCollection = $this->payOutCollectionFactory->create();
         $results = $payOutCollection->filterByMiraklOrderId($miraklOrderId);
 
-        if ((int)$results->count() > 0) {
+        if ($results->count() > 0) {
             return true;
         }
+
         return false;
     }
 }

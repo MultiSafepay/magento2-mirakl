@@ -131,10 +131,13 @@ class Debit extends Action implements CsrfAwareActionInterface
 
         $miraklCustomerDebit = $this->jsonHandler->readJSON($miraklRequest);
 
-        if (!empty($miraklCustomerDebit['order'])) {
-            foreach ($miraklCustomerDebit['order'] as $miraklCustomerDebitItem) {
-                $this->saveCustomerDebit($miraklCustomerDebitItem);
-            }
+        if (empty($miraklCustomerDebit['order'][0]['order_lines'] ?? [])) {
+            $this->logger->info('Mirakl request received without order lines.');
+            return $this->getResponse()->setContent('OK');
+        }
+
+        foreach ($miraklCustomerDebit['order'] as $miraklCustomerDebitItem) {
+            $this->saveCustomerDebit($miraklCustomerDebitItem);
         }
 
         return $this->getResponse()->setContent('OK');

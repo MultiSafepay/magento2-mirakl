@@ -18,7 +18,6 @@ use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
 
 class CustomerDebitOrderLine extends AbstractDb
 {
-
     /**
      * @return void
      */

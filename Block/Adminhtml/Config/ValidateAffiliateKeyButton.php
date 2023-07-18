@@ -46,6 +46,8 @@ class ValidateAffiliateKeyButton extends Field
     }
 
     /**
+     * Overwrite parent method, which retrieve element HTML markup
+     *
      * @param AbstractElement $element
      * @return string
      * @throws LocalizedException
@@ -73,6 +75,8 @@ class ValidateAffiliateKeyButton extends Field
     }
 
     /**
+     * Overwrite parent method, which renders scope label
+     *
      * @param AbstractElement $element
      * @return string
      *
@@ -84,6 +88,8 @@ class ValidateAffiliateKeyButton extends Field
     }
 
     /**
+     * Returns the URL to validate where the affiliate API Key needs to be POST to validate it
+     *
      * @return string
      */
     private function getAjaxUrl(): string

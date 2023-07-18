@@ -1,9 +1,6 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
     <system>
-        <tab id="multisafepay" translate="label" sortOrder="400" class="multisafepay-icon">
-            <label>MultiSafepay</label>
-        </tab>
         <section id="multisafepay_mirakl" translate="label" showInDefault="1" showInWebsite="1" showInStore="1" sortOrder="5">
             <class>separator-top</class>
             <label><![CDATA[Mirakl]]></label>
@@ -29,7 +26,7 @@
                     <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
                     <config_path>multisafepay/mirakl/affiliate_live_api_key</config_path>
                     <comment><![CDATA[<div class="multisafepay-note-blue">
-                    Ask to your account manager for your Affiliate API Key.
+                    Contact your account manager for your Affiliate API Key
                 </div>]]></comment>
                 </field>
                 <field id="affiliate_test_api_key" translate="label" type="obscure" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -38,7 +35,7 @@
                     <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
                     <config_path>multisafepay/mirakl/affiliate_test_api_key</config_path>
                     <comment><![CDATA[<div class="multisafepay-note-blue">
-                    Ask to your account manager for your Affiliate Test API Key.
+                    Contact your account manager for your Affiliate API Key
                 </div>]]></comment>
                 </field>
                 <field id="validate_affiliate_api_key" translate="label" sortOrder="35" showInDefault="1" showInWebsite="1" showInStore="1">

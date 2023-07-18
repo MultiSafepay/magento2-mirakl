@@ -14,8 +14,8 @@ declare(strict_types=1);
 
 namespace MultiSafepay\Mirakl\Cron\Process;
 
+use Exception;
 use Magento\Framework\Exception\AlreadyExistsException;
-use Magento\Setup\Exception;
 use MultiSafepay\Mirakl\Cron\ProcessInterface;
 use MultiSafepay\Mirakl\Logger\Logger;
 use MultiSafepay\Mirakl\Model\CustomerDebit;
@@ -56,9 +56,11 @@ class SetCustomerDebitAsProcessed implements ProcessInterface
     }
 
     /**
+     * Set the customer debit request as processed in database
+     *
      * @param array $orderDebitData
      * @return array|true[]
-     * @throws \Exception
+     * @throws Exception
      */
     public function execute(array $orderDebitData): array
     {
@@ -75,6 +77,11 @@ class SetCustomerDebitAsProcessed implements ProcessInterface
             return [
                 ProcessInterface::SUCCESS_PARAMETER => false,
                 ProcessInterface::MESSAGE_PARAMETER => $alreadyExistsException->getMessage()
+            ];
+        } catch (Exception $exception) {
+            return [
+                ProcessInterface::SUCCESS_PARAMETER => false,
+                ProcessInterface::MESSAGE_PARAMETER => $exception->getMessage()
             ];
         }
 

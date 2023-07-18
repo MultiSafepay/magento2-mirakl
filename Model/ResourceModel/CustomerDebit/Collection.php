@@ -20,7 +20,6 @@ use MultiSafepay\Mirakl\Model\ResourceModel\CustomerDebit as CustomerDebitResour
 
 class Collection extends AbstractCollection
 {
-
     /**
      * @return void
      */
@@ -36,55 +35,9 @@ class Collection extends AbstractCollection
      * @param int $status
      * @return $this
      */
-    public function filterByStatus(int $status)
+    public function filterByStatus(int $status): Collection
     {
         $this->addFieldToFilter(CustomerDebit::STATUS, $status);
-        return $this;
-    }
-
-    /**
-     * @return $this
-     */
-    public function withOrderLines()
-    {
-        // phpcs:disable
-        $this->getSelect()->joinLeft(
-            [
-                'order_line' => $this->getTable('multisafepay_mirakl_customer_debit_order_line')
-            ],
-            'main_table.customer_debit_id = order_line.customer_debit_id',
-            [
-                'order_lines' => new \Zend_Db_Expr(
-                    'GROUP_CONCAT(DISTINCT CONCAT_WS(":", order_line.offer_id, order_line.order_line_amount, order_line.order_line_id, order_line.order_line_quantity) SEPARATOR ",")'
-                )
-            ]
-        )->group('main_table.customer_debit_id');
-        // phpcs:enable
-
-        // Set the results of order_lines into an array at item level.
-        $orderLines = [];
-
-        /** @var CustomerDebit $item */
-        foreach ($this->getItems() as $item) {
-            $data = $item->getData();
-            if (isset($data['order_lines'])) {
-                $orderLines[$data['customer_debit_id']] = [];
-                $lines = explode(',', $data['order_lines']);
-                foreach ($lines as $line) {
-                    $parts = explode(':', $line);
-                    $orderLines[$data['customer_debit_id']][] = [
-                        'offer_id' => $parts[0],
-                        'order_line_amount' => $parts[1],
-                        'order_line_id' => $parts[2],
-                        'order_line_quantity' => $parts[3],
-                    ];
-                }
-            }
-            $item->setOrderLines($orderLines[$data['customer_debit_id']]);
-        }
-
-        $this->save();
-
         return $this;
     }
 }
