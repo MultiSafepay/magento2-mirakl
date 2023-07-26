@@ -63,6 +63,7 @@ class Refund
      * @param array $data
      * @return void
      * @throws AlreadyExistsException
+     * @throws ClientExceptionInterface
      * @throws Exception
      */
     public function execute(array $data): void
@@ -88,15 +89,8 @@ class Refund
             (int)$data['payOutData']['store_id']
         )->getTransactionManager();
 
-        try {
-            $transaction = $transactionManager->get($orderId);
-            $transactionManager->refund($transaction, $refundRequest, $orderId);
-        } catch (ClientExceptionInterface $clientException) {
-            $this->logger->logExceptionForOrder(
-                $data['payOutData']['order_commercial_id'],
-                $clientException
-            );
-        }
+        $transaction = $transactionManager->get($orderId);
+        $transactionManager->refund($transaction, $refundRequest, $orderId);
 
         foreach ($data['refundData']['payout_order_line_ids'] as $order_line_id_processed) {
             $this->payOutOrderLineUtil->setOrderLineAsProcessed((int)$order_line_id_processed);

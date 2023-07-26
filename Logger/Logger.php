@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace MultiSafepay\Mirakl\Logger;
 
 use DateTimeZone;
+use Exception;
 use Mirakl\MMP\FrontOperator\Domain\Collection\Order\OrderCollection;
 use MultiSafepay\ConnectCore\Logger\Logger as CoreLogger;
 use MultiSafepay\ConnectCore\Util\JsonHandler;
@@ -86,39 +87,44 @@ class Logger extends CoreLogger
      *
      * @param string $className
      * @param array $processData
+     * @param bool $isCompleted
      * @return void
      */
-    public function logCronProcessStep(string $className, array $processData): void
+    public function logCronProcessStep(string $className, array $processData, $isCompleted): void
     {
         $this->addRecord(
             self::INFO,
             sprintf(
-                'Cron process %1$s, related with Order ID: %2$s, and Mirakl Order ID: %3$s started',
+                'Cron process %1$s, related with Order ID: %2$s, and Mirakl Order ID: %3$s %4$s',
                 $className,
                 $processData['order_commercial_id'],
-                $processData['order_id']
+                $processData['order_id'],
+                $isCompleted ? 'ended' : 'started'
             )
         );
     }
 
     /**
-     * Log an error related with a cron process
+     * Log an exception thrown during the execution of a cron process
      *
      * @param string $className
      * @param array $processData
-     * @param string $errorMessage
+     * @param Exception $exception
      * @return void
      */
-    public function logCronProcessError(string $className, array $processData, string $errorMessage): void
+    public function logCronProcessException(string $className, array $processData, Exception $exception)
     {
         $this->addRecord(
             self::ERROR,
             sprintf(
-                'Cron process %1$s, related with Order ID: %2$s, and Mirakl Order ID: %3$s return error %4$s',
+                'Process %1$s, Order ID: %2$s, and Mirakl Order ID: %3$s return error %4$s (%5$d, %6$d, %7$s)',
                 $className,
                 $processData['order_commercial_id'],
                 $processData['order_id'],
-                $errorMessage
+                $exception->getMessage(),
+                $exception->getCode(),
+                $exception->getLine(),
+                $exception->getFile()
             )
         );
     }

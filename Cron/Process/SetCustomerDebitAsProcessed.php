@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace MultiSafepay\Mirakl\Cron\Process;
 
-use Exception;
 use Magento\Framework\Exception\AlreadyExistsException;
 use MultiSafepay\Mirakl\Cron\ProcessInterface;
 use MultiSafepay\Mirakl\Logger\Logger;
@@ -59,10 +58,10 @@ class SetCustomerDebitAsProcessed implements ProcessInterface
      * Set the customer debit request as processed in database
      *
      * @param array $orderDebitData
-     * @return array|true[]
-     * @throws Exception
+     * @return void
+     * @throws AlreadyExistsException
      */
-    public function execute(array $orderDebitData): array
+    public function execute(array $orderDebitData): void
     {
         /** @var Collection $debitRequestCollection */
         $debitRequestCollection = $this->customerDebitCollectionFactory->create();
@@ -71,20 +70,6 @@ class SetCustomerDebitAsProcessed implements ProcessInterface
         $customerDebitRequest = $debitRequestCollection->getItemById($orderDebitData[CustomerDebit::CUSTOMER_DEBIT_ID]);
         $customerDebitRequest->setStatus(0);
 
-        try {
-            $this->customerDebitRequestResourceModel->save($customerDebitRequest);
-        } catch (AlreadyExistsException $alreadyExistsException) {
-            return [
-                ProcessInterface::SUCCESS_PARAMETER => false,
-                ProcessInterface::MESSAGE_PARAMETER => $alreadyExistsException->getMessage()
-            ];
-        } catch (Exception $exception) {
-            return [
-                ProcessInterface::SUCCESS_PARAMETER => false,
-                ProcessInterface::MESSAGE_PARAMETER => $exception->getMessage()
-            ];
-        }
-
-        return [ProcessInterface::SUCCESS_PARAMETER => true];
+        $this->customerDebitRequestResourceModel->save($customerDebitRequest);
     }
 }

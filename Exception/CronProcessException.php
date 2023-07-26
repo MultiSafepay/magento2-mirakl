@@ -12,15 +12,11 @@
 
 declare(strict_types=1);
 
-namespace MultiSafepay\Mirakl\Cron;
+namespace MultiSafepay\Mirakl\Exception;
 
-interface ProcessInterface
+use Exception;
+
+class CronProcessException extends Exception
 {
-    /**
-     * Executes the processes which are needed to confirm the order debit request
-     *
-     * @param array $orderDebitData
-     * @return void
-     */
-    public function execute(array $orderDebitData): void;
+
 }

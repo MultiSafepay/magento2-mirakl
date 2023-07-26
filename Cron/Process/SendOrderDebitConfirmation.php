@@ -14,11 +14,10 @@ declare(strict_types=1);
 
 namespace MultiSafepay\Mirakl\Cron\Process;
 
-use Exception;
+use MultiSafepay\Mirakl\Api\Mirakl\Client\FrontApiClient as MiraklFrontApiClient;
+use MultiSafepay\Mirakl\Api\Mirakl\Request\ConfirmOrderDebitRequest;
 use MultiSafepay\Mirakl\Cron\ProcessInterface;
 use MultiSafepay\Mirakl\Logger\Logger;
-use MultiSafepay\Mirakl\Api\Mirakl\Request\ConfirmOrderDebitRequest;
-use MultiSafepay\Mirakl\Api\Mirakl\Client\FrontApiClient as MiraklFrontApiClient;
 
 class SendOrderDebitConfirmation implements ProcessInterface
 {
@@ -56,22 +55,12 @@ class SendOrderDebitConfirmation implements ProcessInterface
      * Send a request to Mirakl API to confirm the order debit
      *
      * @param array $orderDebitData
-     * @return array|true[]
+     * @return void
      */
-    public function execute(array $orderDebitData): array
+    public function execute(array $orderDebitData): void
     {
-        try {
-            $miraklFrontApiClient = $this->miraklFrontApiClient->get();
-            $miraklConfirmOrderDebitRequest = $this->confirmOrderDebitRequest->get($orderDebitData);
-            $miraklFrontApiClient->confirmOrderDebit($miraklConfirmOrderDebitRequest);
-        } catch (Exception $exception) {
-            $this->logger->logException($exception);
-            return [
-                ProcessInterface::SUCCESS_PARAMETER => false,
-                ProcessInterface::MESSAGE_PARAMETER => $exception->getMessage()
-            ];
-        }
-
-        return [ProcessInterface::SUCCESS_PARAMETER => true];
+        $miraklFrontApiClient = $this->miraklFrontApiClient->get();
+        $miraklConfirmOrderDebitRequest = $this->confirmOrderDebitRequest->get($orderDebitData);
+        $miraklFrontApiClient->confirmOrderDebit($miraklConfirmOrderDebitRequest);
     }
 }

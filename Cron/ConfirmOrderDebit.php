@@ -14,11 +14,12 @@ declare(strict_types=1);
 
 namespace MultiSafepay\Mirakl\Cron;
 
+use Exception;
 use MultiSafepay\Mirakl\Cron\Process\ConfirmPayment;
+use MultiSafepay\Mirakl\Cron\Process\ProcessFunds;
 use MultiSafepay\Mirakl\Cron\Process\SavePayOutData;
 use MultiSafepay\Mirakl\Cron\Process\SendOrderDebitConfirmation;
 use MultiSafepay\Mirakl\Cron\Process\SetCustomerDebitAsProcessed;
-use MultiSafepay\Mirakl\Cron\Process\ProcessFunds;
 use MultiSafepay\Mirakl\Logger\Logger;
 use MultiSafepay\Mirakl\Model\CustomerDebitFactory;
 use MultiSafepay\Mirakl\Model\ResourceModel\CustomerDebit\Collection;
@@ -94,7 +95,7 @@ class ConfirmOrderDebit
     }
 
     /**
-     * List all customer debit request pending to be processed to check the payment status,
+     * List customer debit requests pending to be processed to check the payment status,
      * transfer funds, and confirm the payment in Mirakl
      *
      * @return void
@@ -115,20 +116,20 @@ class ConfirmOrderDebit
 
         foreach ($debitCollection->getItems() as $debitRequest) {
             foreach ($processes as $process) {
-                $this->logger->logCronProcessStep(
-                    get_class($process),
-                    $debitRequest->getData()
-                );
-                $response = $process->execute($debitRequest->getData());
-                if (!$response[ProcessInterface::SUCCESS_PARAMETER]) {
+                $this->logger->logCronProcessStep(get_class($process), $debitRequest->getData(), false);
 
-                    $this->logger->logCronProcessError(
+                try {
+                    $process->execute($debitRequest->getData());
+                } catch (Exception $exception) {
+                    $this->logger->logCronProcessException(
                         get_class($process),
                         $debitRequest->getData(),
-                        $response[ProcessInterface::MESSAGE_PARAMETER]
+                        $exception
                     );
                     break;
                 }
+
+                $this->logger->logCronProcessStep(get_class($process), $debitRequest->getData(), true);
             }
         }
     }

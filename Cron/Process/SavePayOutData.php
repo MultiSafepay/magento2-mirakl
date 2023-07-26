@@ -21,8 +21,6 @@ use MultiSafepay\Mirakl\Cron\Process\SavePayOutData\SavePayOutOrderLines;
 use MultiSafepay\Mirakl\Cron\ProcessInterface;
 use MultiSafepay\Mirakl\Logger\Logger;
 use MultiSafepay\Mirakl\Model\CustomerDebit;
-use MultiSafepay\Mirakl\Model\PayOutFactory;
-use MultiSafepay\Mirakl\Model\PayOutOrderLineFactory;
 use MultiSafepay\Mirakl\Model\ResourceModel\PayOut\Collection;
 use MultiSafepay\Mirakl\Model\ResourceModel\PayOut\CollectionFactory as PayOutCollectionFactory;
 use MultiSafepay\Mirakl\Util\MiraklOrderUtil;
@@ -79,41 +77,21 @@ class SavePayOutData implements ProcessInterface
      * Getting the Magento order, and the Mirakl order to save the details about the payout in the database
      *
      * @param array $orderDebitData
-     * @return array|true[]
+     * @return void
+     * @throws AlreadyExistsException
+     * @throws NoSuchEntityException
      */
-    public function execute(array $orderDebitData): array
+    public function execute(array $orderDebitData): void
     {
         $miraklOrder = $this->miraklOrderUtil->getById($orderDebitData[CustomerDebit::ORDER_ID]);
 
         if ($this->hasPayOutRecord($miraklOrder->getId())) {
-            return [ProcessInterface::SUCCESS_PARAMETER => true];
+            return;
         }
 
-        try {
-            $miraklPayOut = $this->savePayOut->execute(
-                $miraklOrder,
-                $orderDebitData[CustomerDebit::ORDER_COMMERCIAL_ID]
-            );
-        } catch (AlreadyExistsException | NoSuchEntityException $exception) {
-            return [
-                ProcessInterface::SUCCESS_PARAMETER => false,
-                ProcessInterface::MESSAGE_PARAMETER => $exception->getMessage()
-            ];
-        }
+        $miraklPayOut = $this->savePayOut->execute($miraklOrder, $orderDebitData[CustomerDebit::ORDER_COMMERCIAL_ID]);
 
-        try {
-            $this->savePayOutOrderLines->execute(
-                $miraklOrder->getOrderLines()->getItems(),
-                (int)$miraklPayOut->getId()
-            );
-        } catch (AlreadyExistsException $exception) {
-            return [
-                ProcessInterface::SUCCESS_PARAMETER => false,
-                ProcessInterface::MESSAGE_PARAMETER => $exception->getMessage()
-            ];
-        }
-
-        return [ProcessInterface::SUCCESS_PARAMETER => true];
+        $this->savePayOutOrderLines->execute($miraklOrder->getOrderLines()->getItems(), (int)$miraklPayOut->getId());
     }
 
     /**

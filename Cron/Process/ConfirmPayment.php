@@ -20,6 +20,7 @@ use MultiSafepay\Api\Transactions\Transaction;
 use MultiSafepay\ConnectCore\Factory\SdkFactory;
 use MultiSafepay\ConnectCore\Util\OrderUtil;
 use MultiSafepay\Mirakl\Cron\ProcessInterface;
+use MultiSafepay\Mirakl\Exception\CronProcessException;
 use MultiSafepay\Mirakl\Logger\Logger;
 use MultiSafepay\Mirakl\Model\CustomerDebit;
 use Psr\Http\Client\ClientExceptionInterface;
@@ -62,65 +63,31 @@ class ConfirmPayment implements ProcessInterface
      * The confirm payment process which checks for the transaction status and order amount
      *
      * @param array $orderDebitData
-     * @return array|bool[]
+     * @return void
+     * @throws ClientExceptionInterface
+     * @throws CronProcessException
+     * @throws NoSuchEntityException
+     * @throws Exception
      */
-    public function execute(array $orderDebitData): array
+    public function execute(array $orderDebitData): void
     {
         // Getting the Magento Order
-        try {
-            $order = $this->orderUtil->getOrderByIncrementId(
-                $orderDebitData[CustomerDebit::ORDER_COMMERCIAL_ID]
-            );
-        } catch (NoSuchEntityException $noSuchEntityException) {
-            return [
-                ProcessInterface::SUCCESS_PARAMETER => false,
-                ProcessInterface::MESSAGE_PARAMETER => $noSuchEntityException->getMessage()
-            ];
-        }
+        $order = $this->orderUtil->getOrderByIncrementId($orderDebitData[CustomerDebit::ORDER_COMMERCIAL_ID]);
 
         // Getting an instance of the TransactionManager object
-        try {
-            $transactionManager = $this->sdkFactory->create(
-                (int)$order->getStoreId()
-            )->getTransactionManager();
-        } catch (Exception $exception) {
-            return [
-                ProcessInterface::SUCCESS_PARAMETER => false,
-                ProcessInterface::MESSAGE_PARAMETER => $exception->getMessage()
-            ];
-        }
+        $transactionManager = $this->sdkFactory->create((int)$order->getStoreId())->getTransactionManager();
 
         // Retrieve transaction details using MultiSafepay API
-        try {
-            $transaction = $transactionManager->get($orderDebitData[CustomerDebit::ORDER_COMMERCIAL_ID]);
-        } catch (ClientExceptionInterface $clientException) {
-            return [
-                ProcessInterface::SUCCESS_PARAMETER => false,
-                ProcessInterface::MESSAGE_PARAMETER => $clientException->getMessage()
-            ];
-        } catch (ApiException $apiException) {
-            return [
-                ProcessInterface::SUCCESS_PARAMETER => false,
-                ProcessInterface::MESSAGE_PARAMETER => $apiException->getMessage()
-            ];
-        }
+        $transaction = $transactionManager->get($orderDebitData[CustomerDebit::ORDER_COMMERCIAL_ID]);
 
         // Check if transaction amount is equal or higher than the one received in the order debit data
         if (!($transaction->getAmount() / 100) >= (float)$orderDebitData[CustomerDebit::AMOUNT]) {
-            return [
-                ProcessInterface::SUCCESS_PARAMETER => false,
-                ProcessInterface::MESSAGE_PARAMETER => 'Order amount is higher than transaction amount'
-            ];
+            throw (new CronProcessException('Order amount is higher than transaction amount'));
         }
 
         // Check if transaction is completed
         if ($transaction->getStatus() !== Transaction::COMPLETED) {
-            return [
-                ProcessInterface::SUCCESS_PARAMETER => false,
-                ProcessInterface::MESSAGE_PARAMETER => 'Transaction status is not completed'
-            ];
+            throw (new CronProcessException('Transaction status is not completed'));
         }
-
-        return [ProcessInterface::SUCCESS_PARAMETER => true];
     }
 }

@@ -16,7 +16,6 @@ namespace MultiSafepay\Mirakl\Cron\Process;
 
 use Exception;
 use Mirakl\MMP\Common\Domain\Order\OrderState;
-use MultiSafepay\Exception\ApiException;
 use MultiSafepay\Mirakl\Cron\Process\ProcessFunds\Refund;
 use MultiSafepay\Mirakl\Cron\Process\ProcessFunds\TransferFunds;
 use MultiSafepay\Mirakl\Cron\ProcessInterface;
@@ -24,7 +23,6 @@ use MultiSafepay\Mirakl\Model\PayOut;
 use MultiSafepay\Mirakl\Model\PayOutOrderLine;
 use MultiSafepay\Mirakl\Model\ResourceModel\PayOut\CollectionFactory as PayOutCollectionFactory;
 use MultiSafepay\Mirakl\Model\ResourceModel\PayOut\Collection as PayOutCollection;
-use MultiSafepay\Mirakl\Model\ResourceModel\PayOutOrderLine as PayOutOrderLineResourceModel;
 use MultiSafepay\Mirakl\Model\ResourceModel\PayOutOrderLine\CollectionFactory as PayOutOrderLineCollectionFactory;
 use Psr\Http\Client\ClientExceptionInterface;
 
@@ -34,11 +32,6 @@ class ProcessFunds implements ProcessInterface
      * @var PayOutCollectionFactory
      */
     private $payOutCollectionFactory;
-
-    /**
-     * @var PayOutOrderLineResourceModel
-     */
-    private $payOutOrderLineResourceModel;
 
     /**
      * @var PayOutOrderLineCollectionFactory
@@ -57,20 +50,17 @@ class ProcessFunds implements ProcessInterface
 
     /**
      * @param PayOutCollectionFactory $payOutCollectionFactory
-     * @param PayOutOrderLineResourceModel $payOutOrderLineResourceModel
      * @param PayOutOrderLineCollectionFactory $payOutOrderLineCollectionFactory
      * @param Refund $refund
      * @param TransferFunds $transferFunds
      */
     public function __construct(
         PayOutCollectionFactory $payOutCollectionFactory,
-        PayOutOrderLineResourceModel $payOutOrderLineResourceModel,
         PayOutOrderLineCollectionFactory $payOutOrderLineCollectionFactory,
         Refund $refund,
         TransferFunds $transferFunds
     ) {
         $this->payOutCollectionFactory = $payOutCollectionFactory;
-        $this->payOutOrderLineResourceModel = $payOutOrderLineResourceModel;
         $this->payOutOrderLineCollectionFactory = $payOutOrderLineCollectionFactory;
         $this->refund = $refund;
         $this->transferFunds = $transferFunds;
@@ -80,10 +70,11 @@ class ProcessFunds implements ProcessInterface
      * Process the fund transaction to the seller and operator, and the refund if needed
      *
      * @param array $orderDebitData
-     * @return array|true[]
+     * @return void
      * @throws Exception
+     * @throws ClientExceptionInterface
      */
-    public function execute(array $orderDebitData): array
+    public function execute(array $orderDebitData): void
     {
         /** @var PayOutCollection $payOutCollection */
         $payOutCollection = $this->payOutCollectionFactory->create();
@@ -92,22 +83,11 @@ class ProcessFunds implements ProcessInterface
 
         $data = $this->buildDataFromItems($items);
 
-        try {
-            $this->refund->execute($data);
-            $this->transferFunds->execute($data);
-        } catch (ClientExceptionInterface $clientException) {
-            return [
-                ProcessInterface::SUCCESS_PARAMETER => false,
-                ProcessInterface::MESSAGE_PARAMETER => $clientException->getMessage()
-            ];
-        } catch (ApiException $apiException) {
-            return [
-                ProcessInterface::SUCCESS_PARAMETER => false,
-                ProcessInterface::MESSAGE_PARAMETER => $apiException->getMessage()
-            ];
-        }
+        // Refund
+        $this->refund->execute($data);
 
-        return [ProcessInterface::SUCCESS_PARAMETER => true];
+        // Transfer funds
+        $this->transferFunds->execute($data);
     }
 
     /**
@@ -124,7 +104,6 @@ class ProcessFunds implements ProcessInterface
 
         /** @var PayOut $payOutItem */
         foreach ($items as $payOutItem) {
-
             if ($payOutItem === reset($items)) {
                 $payOutData = $this->buildPayOutData($payOutItem, $payOutData);
             }

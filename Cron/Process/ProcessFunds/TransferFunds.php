@@ -17,7 +17,6 @@ namespace MultiSafepay\Mirakl\Cron\Process\ProcessFunds;
 use Exception;
 use Magento\Framework\Exception\AlreadyExistsException;
 use Magento\Framework\Exception\NoSuchEntityException;
-use MultiSafepay\Exception\ApiException;
 use MultiSafepay\Mirakl\Api\MultiSafepay\Sdk\Affiliates\FundRequest\FundRequest;
 use MultiSafepay\Mirakl\Config\Config;
 use MultiSafepay\Mirakl\Factory\AffiliatesSdkFactory;
@@ -81,9 +80,10 @@ class TransferFunds
      *
      * @param array $data
      * @return void
-     * @throws ClientExceptionInterface
      * @throws AlreadyExistsException
+     * @throws ClientExceptionInterface
      * @throws NoSuchEntityException
+     * @throws Exception
      */
     public function execute(array $data): void
     {
@@ -137,7 +137,7 @@ class TransferFunds
     }
 
     /**
-     * Transfer funds to the operator
+     * Transfer funds to the operator or to the seller
      *
      * @param array $data
      * @param float $amount
@@ -166,11 +166,7 @@ class TransferFunds
 
         $affiliatesManager = $affiliatesSdk->getAffiliatesManager();
 
-        try {
-            $affiliatesManager->fund($accountId, $fundRequest);
-        } catch (ApiException $apiException) {
-            $this->logger->error($apiException->getMessage());
-        }
+        $affiliatesManager->fund($accountId, $fundRequest);
     }
 
     /**
