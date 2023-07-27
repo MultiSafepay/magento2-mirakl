@@ -142,7 +142,7 @@ class ProcessFunds implements ProcessInterface
     {
         $payOutData['currency_iso_code'] = $payOutItem->getMiraklCurrencyIsoCode();
         $payOutData['shop_id'] = $payOutItem->getMiraklShopId();
-        $payOutData['store_id'] = $payOutItem->getMagentoShopId();
+        $payOutData['store_id'] = $payOutItem->getMagentoStoreId();
         $payOutData['order_id'] = $payOutItem->getMiraklOrderId();
         $payOutData['order_commercial_id'] = $payOutItem->getMagentoOrderId();
 

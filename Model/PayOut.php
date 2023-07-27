@@ -20,7 +20,7 @@ use MultiSafepay\Mirakl\Model\ResourceModel\PayOut as PayOutResourceModel;
 
 class PayOut extends AbstractModel
 {
-    public const MAGENTO_SHOP_ID = 'store_id';
+    public const MAGENTO_STORE_ID = 'store_id';
     public const MIRAKL_SHOP_ID = 'shop_id';
     public const MAGENTO_ORDER_ID = 'order_commercial_id';
     public const MIRAKL_ORDER_ID = 'order_id';
@@ -39,18 +39,18 @@ class PayOut extends AbstractModel
     /**
      * @return int
      */
-    public function getMagentoShopId(): int
+    public function getMagentoStoreId(): int
     {
-        return (int)$this->getData(self::MAGENTO_SHOP_ID);
+        return (int)$this->getData(self::MAGENTO_STORE_ID);
     }
 
     /**
-     * @param int $magentoShopId
+     * @param int $magentoStoreId
      * @return PayOut
      */
-    public function setMagentoShopId(int $magentoShopId): PayOut
+    public function setMagentoStoreId(int $magentoStoreId): PayOut
     {
-        return $this->setData(self::MAGENTO_SHOP_ID, $magentoShopId);
+        return $this->setData(self::MAGENTO_STORE_ID, $magentoStoreId);
     }
 
     /**

@@ -64,7 +64,7 @@ class SavePayOut
 
         /** @var PayOut $payOut */
         $payOut = $this->payOutFactory->create();
-        $payOut->setMagentoShopId($storeId);
+        $payOut->setMagentoStoreId($storeId);
         $payOut->setMiraklShopId((int)$miraklOrder->getShopId());
         $payOut->setMagentoOrderId($miraklOrder->getCommercialId());
         $payOut->setMiraklCurrencyIsoCode($miraklOrder->getCurrencyIsoCode());
