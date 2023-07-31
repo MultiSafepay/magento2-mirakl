@@ -116,7 +116,7 @@ class ConfirmOrderDebit
 
         foreach ($debitCollection->getItems() as $debitRequest) {
             foreach ($processes as $process) {
-                $this->logger->logCronProcessStep(get_class($process), $debitRequest->getData(), false);
+                $this->logger->logCronProcessStep(get_class($process), $debitRequest->getData(), 'Process started');
 
                 try {
                     $process->execute($debitRequest->getData());
@@ -129,7 +129,7 @@ class ConfirmOrderDebit
                     break;
                 }
 
-                $this->logger->logCronProcessStep(get_class($process), $debitRequest->getData(), true);
+                $this->logger->logCronProcessStep(get_class($process), $debitRequest->getData(), 'Process ended');
             }
         }
     }

@@ -69,6 +69,10 @@ class Refund
     public function execute(array $data): void
     {
         if (!$this->shouldRefund($data['refundData'])) {
+            $this->logger->logCronProcessInfo(
+                'Skipping ProcessFunds - Refund action, since total amount is 0.',
+                $data
+            );
             return;
         }
 

@@ -87,19 +87,19 @@ class Logger extends CoreLogger
      *
      * @param string $className
      * @param array $processData
-     * @param bool $isCompleted
+     * @param string $message
      * @return void
      */
-    public function logCronProcessStep(string $className, array $processData, $isCompleted): void
+    public function logCronProcessStep(string $className, array $processData, string $message): void
     {
         $this->addRecord(
             self::INFO,
             sprintf(
-                'Cron process %1$s, related with Order ID: %2$s, and Mirakl Order ID: %3$s %4$s',
+                '(Cron process %1$s, Order ID: %2$s, Mirakl Order ID: %3$s): %4$s',
                 $className,
-                $processData['order_commercial_id'],
-                $processData['order_id'],
-                $isCompleted ? 'ended' : 'started'
+                $processData['order_commercial_id'] ?? 'Unknown',
+                $processData['order_id'] ?? 'Unknown',
+                $message
             )
         );
     }
@@ -117,10 +117,10 @@ class Logger extends CoreLogger
         $this->addRecord(
             self::ERROR,
             sprintf(
-                'Process %1$s, Order ID: %2$s, and Mirakl Order ID: %3$s return error %4$s (%5$d, %6$d, %7$s)',
+                '(Process %1$s, Order ID: %2$s, Mirakl Order ID: %3$s): Error occurred: %4$s (%5$d, %6$d, %7$s)',
                 $className,
-                $processData['order_commercial_id'],
-                $processData['order_id'],
+                $processData['order_commercial_id'] ?? 'Unknown',
+                $processData['order_id'] ?? 'Unknown',
                 $exception->getMessage(),
                 $exception->getCode(),
                 $exception->getLine(),
@@ -130,18 +130,21 @@ class Logger extends CoreLogger
     }
 
     /**
-     * Log Mirakl order details retrieve using the API
+     * Log debug information during the execution of a cron process
      *
-     * @param OrderCollection $miraklOrder
+     * @param string $message
+     * @param array $processData
+     * @param int $logLevel
      * @return void
      */
-    public function logMiraklOrder(OrderCollection $miraklOrder): void
+    public function logCronProcessInfo(string $message, array $processData, int $logLevel = self::INFO): void
     {
         $this->addRecord(
-            self::INFO,
+            $logLevel,
             sprintf(
-                'Mirakl order retrieve using the API: %1$s',
-                $this->jsonHandler->convertToJSON($miraklOrder->toArray())
+                '%1$s. Details: %2$s',
+                $message,
+                $this->jsonHandler->convertToJSON($processData)
             )
         );
     }

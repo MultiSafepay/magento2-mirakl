@@ -88,6 +88,10 @@ class TransferFunds
     public function execute(array $data): void
     {
         if (empty($data['transferFundsData'])) {
+            $this->logger->logCronProcessInfo(
+                'Skipping ProcessFunds - TransferFunds action, since transferFundsData is empty.',
+                $data
+            );
             return;
         }
 

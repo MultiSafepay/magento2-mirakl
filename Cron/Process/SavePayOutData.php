@@ -86,6 +86,10 @@ class SavePayOutData implements ProcessInterface
         $miraklOrder = $this->miraklOrderUtil->getById($orderDebitData[CustomerDebit::ORDER_ID]);
 
         if ($this->hasPayOutRecord($miraklOrder->getId())) {
+            $this->logger->logCronProcessInfo(
+                'Skipping SavePayOutData action, since a previous record of this data has been found.',
+                $orderDebitData
+            );
             return;
         }
 
