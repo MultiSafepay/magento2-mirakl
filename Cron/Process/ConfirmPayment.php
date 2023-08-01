@@ -21,7 +21,6 @@ use MultiSafepay\ConnectCore\Factory\SdkFactory;
 use MultiSafepay\ConnectCore\Util\OrderUtil;
 use MultiSafepay\Mirakl\Cron\ProcessInterface;
 use MultiSafepay\Mirakl\Exception\CronProcessException;
-use MultiSafepay\Mirakl\Logger\Logger;
 use MultiSafepay\Mirakl\Model\CustomerDebit;
 use Psr\Http\Client\ClientExceptionInterface;
 
@@ -38,25 +37,17 @@ class ConfirmPayment implements ProcessInterface
     private $sdkFactory;
 
     /**
-     * @var Logger
-     */
-    private $logger;
-
-    /**
      * ConfirmPayment constructor
      *
      * @param OrderUtil $orderUtil
      * @param SdkFactory $sdkFactory
-     * @param Logger $logger
      */
     public function __construct(
         OrderUtil $orderUtil,
-        SdkFactory $sdkFactory,
-        Logger $logger
+        SdkFactory $sdkFactory
     ) {
         $this->orderUtil = $orderUtil;
         $this->sdkFactory = $sdkFactory;
-        $this->logger = $logger;
     }
 
     /**

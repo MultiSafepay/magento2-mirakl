@@ -17,7 +17,6 @@ namespace MultiSafepay\Mirakl\Cron\Process;
 use MultiSafepay\Mirakl\Api\Mirakl\Client\FrontApiClient as MiraklFrontApiClient;
 use MultiSafepay\Mirakl\Api\Mirakl\Request\ConfirmOrderDebitRequest;
 use MultiSafepay\Mirakl\Cron\ProcessInterface;
-use MultiSafepay\Mirakl\Logger\Logger;
 
 class SendOrderDebitConfirmation implements ProcessInterface
 {
@@ -32,23 +31,15 @@ class SendOrderDebitConfirmation implements ProcessInterface
     private $confirmOrderDebitRequest;
 
     /**
-     * @var Logger
-     */
-    private $logger;
-
-    /**
      * @var MiraklFrontApiClient $miraklFrontApiClient
      * @var ConfirmOrderDebitRequest $confirmOrderDebitRequest
-     * @param Logger $logger
      */
     public function __construct(
         MiraklFrontApiClient $miraklFrontApiClient,
-        ConfirmOrderDebitRequest $confirmOrderDebitRequest,
-        Logger $logger
+        ConfirmOrderDebitRequest $confirmOrderDebitRequest
     ) {
         $this->miraklFrontApiClient = $miraklFrontApiClient;
         $this->confirmOrderDebitRequest = $confirmOrderDebitRequest;
-        $this->logger = $logger;
     }
 
     /**

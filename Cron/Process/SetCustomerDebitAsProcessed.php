@@ -16,7 +16,6 @@ namespace MultiSafepay\Mirakl\Cron\Process;
 
 use Magento\Framework\Exception\AlreadyExistsException;
 use MultiSafepay\Mirakl\Cron\ProcessInterface;
-use MultiSafepay\Mirakl\Logger\Logger;
 use MultiSafepay\Mirakl\Model\CustomerDebit;
 use MultiSafepay\Mirakl\Model\ResourceModel\CustomerDebit as CustomerDebitRequestResourceModel;
 use MultiSafepay\Mirakl\Model\ResourceModel\CustomerDebit\Collection;
@@ -35,23 +34,15 @@ class SetCustomerDebitAsProcessed implements ProcessInterface
     private $customerDebitCollectionFactory;
 
     /**
-     * @var Logger
-     */
-    private $logger;
-
-    /**
      * @param CustomerDebitRequestResourceModel $customerDebitRequestResourceModel
      * @param CustomerDebitCollectionFactory $customerDebitCollectionFactory
-     * @param Logger $logger
      */
     public function __construct(
         CustomerDebitRequestResourceModel $customerDebitRequestResourceModel,
-        CustomerDebitCollectionFactory $customerDebitCollectionFactory,
-        Logger $logger
+        CustomerDebitCollectionFactory $customerDebitCollectionFactory
     ) {
         $this->customerDebitRequestResourceModel = $customerDebitRequestResourceModel;
         $this->customerDebitCollectionFactory = $customerDebitCollectionFactory;
-        $this->logger = $logger;
     }
 
     /**
