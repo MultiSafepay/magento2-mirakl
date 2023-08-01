@@ -137,7 +137,12 @@ class TransferFunds
         $amount = array_sum($data['transferFundsData']['seller_amount']);
         $accountId = $this->accountUtil->getSellerMultiSafepayAccountId($data['payOutData']['shop_id']);
 
-        $this->transferFunds($data, $amount, $accountId);
+        $additionalData = [
+            'var1' => (string)array_sum($data['transferFundsData']['total_price_including_taxes']),
+            'var2' => (string)array_sum($data['transferFundsData']['operator_amount'])
+        ];
+
+        $this->transferFunds($data, $amount, $accountId, $additionalData);
     }
 
     /**
@@ -146,11 +151,12 @@ class TransferFunds
      * @param array $data
      * @param float $amount
      * @param int $accountId
+     * @param array $additionalData
      * @return void
      * @throws ClientExceptionInterface
      * @throws Exception
      */
-    private function transferFunds(array $data, float $amount, int $accountId): void
+    private function transferFunds(array $data, float $amount, int $accountId, array $additionalData = []): void
     {
         $affiliatesSdk = $this->affiliatesSdkFactory->createAffiliatesSdk(
             (int)$data['payOutData']['store_id']
@@ -168,6 +174,10 @@ class TransferFunds
             ->addOrderId($data['payOutData']['order_id'])
             ->addMoney($fundAmount);
 
+        if (!empty($additionalData)) {
+            $fundRequest->addData($additionalData);
+        }
+
         $affiliatesManager = $affiliatesSdk->getAffiliatesManager();
 
         $affiliatesManager->fund($accountId, $fundRequest);
@@ -184,6 +194,7 @@ class TransferFunds
     {
         $transferFundsData['seller_amount'][] = $orderLine[PayOutOrderLine::SELLER_AMOUNT];
         $transferFundsData['operator_amount'][] = $orderLine[PayOutOrderLine::OPERATOR_AMOUNT];
+        $transferFundsData['total_price_including_taxes'][] = $orderLine[PayOutOrderLine::TOTAL_PRICE_INCLUDING_TAXES];
         $transferFundsData['payout_order_line_ids'][] = $orderLine[PayOutOrderLine::PAYOUT_ORDER_LINE_ID];
 
         return $transferFundsData;
