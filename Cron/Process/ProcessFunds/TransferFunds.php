@@ -119,7 +119,7 @@ class TransferFunds
     private function transferFundsToOperator(array $data): void
     {
         $amount = array_sum($data['transferFundsData']['operator_amount']);
-        $accountId = $this->config->getCollectingAccountId();
+        $accountId = $this->config->getCollectingAccountId($data['payOutData']['store_id']);
 
         $this->transferFunds($data, $amount, $accountId);
     }
