@@ -83,6 +83,23 @@ class Logger extends CoreLogger
     }
 
     /**
+     * Log the incomming Mirakl customer refund request
+     *
+     * @param string $miraklRequest
+     * @return void
+     */
+    public function logMiraklCustomerRefundRequest(string $miraklRequest): void
+    {
+        $this->addRecord(
+            self::INFO,
+            sprintf(
+                'Mirakl Refund request received: %1$s',
+                $miraklRequest
+            )
+        );
+    }
+
+    /**
      * Log the start of a cron process
      *
      * @param string $className

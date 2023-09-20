@@ -27,6 +27,33 @@
         </constraint>
         <constraint xsi:type="foreign" referenceId="MULTISAFEPAY_MIRAKL_CUSTOMER_DEBIT_ORDER_LINE_CUSTOMER_DEBIT_ID_MULTISAFEPAY_MIRAKL_CUSTOMER_DEBIT_CUSTOMER_DEBIT_ID" table="multisafepay_mirakl_customer_debit_order_line" column="customer_debit_id" referenceTable="multisafepay_mirakl_customer_debit" referenceColumn="customer_debit_id" onDelete="CASCADE"/>
     </table>
+    <table name="multisafepay_mirakl_customer_refund" resource="default" engine="innodb" comment="Mirakl Customer Refund Requests">
+        <column xsi:type="int" name="customer_refund_id" unsigned="true" nullable="false" identity="true" comment="ID" />
+        <column xsi:type="decimal" name="amount" scale="2" nullable="false" comment="Amount" />
+        <column xsi:type="varchar" name="currency_iso_code" length="3" nullable="false" comment="Currency ISO code" />
+        <column xsi:type="varchar" name="customer_id" nullable="false" length="255" comment="Customer ID" />
+        <column xsi:type="varchar" name="order_commercial_id" nullable="false" length="255" comment="Order Commercial ID" />
+        <column xsi:type="varchar" name="order_id" nullable="false" length="255" comment="Order ID" />
+        <column xsi:type="varchar" name="payment_workflow" nullable="false" length="255" comment="Payment Workflow" />
+        <column xsi:type="varchar" name="shop_id" nullable="false" length="255" comment="Shop ID" />
+        <column xsi:type="timestamp" name="timestamp" nullable="false" default="CURRENT_TIMESTAMP" comment="Timestamp" />
+        <column xsi:type="int" name="status" unsigned="true" nullable="false" comment="Status" />
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="customer_refund_id"/>
+        </constraint>
+    </table>
+    <table name="multisafepay_mirakl_customer_refund_order_line" resource="default" engine="innodb" comment="Mirakl Customer Refund Request Order Lines">
+        <column xsi:type="int" name="customer_refund_order_line_id" unsigned="true" nullable="false" identity="true" comment="ID" />
+        <column xsi:type="int" name="customer_refund_id" unsigned="true" nullable="false" comment="Customer Refund Request ID" />
+        <column xsi:type="varchar" name="offer_id" nullable="false" length="255" comment="Offer ID" />
+        <column xsi:type="decimal" name="order_line_amount" scale="2" nullable="false" comment="Order Line Amount" />
+        <column xsi:type="varchar" name="order_line_id" nullable="false" length="255" comment="Order Line ID" />
+        <column xsi:type="int" name="order_line_quantity" unsigned="true" nullable="false" comment="Order Line Quantity" />
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="customer_refund_order_line_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="MULTISAFEPAY_MIRAKL_CUSTOMER_REFUND_ORDER_LINE_CUSTOMER_REFUND_ID_MULTISAFEPAY_MIRAKL_CUSTOMER_REFUND_CUSTOMER_REFUND_ID" table="multisafepay_mirakl_customer_refund_order_line" column="customer_refund_id" referenceTable="multisafepay_mirakl_customer_refund" referenceColumn="customer_refund_id" onDelete="CASCADE"/>
+    </table>
     <table name="multisafepay_mirakl_payout" resource="default" engine="innodb" comment="Mirakl Payout">
         <column xsi:type="int" name="payout_id" unsigned="true" nullable="false" identity="true" comment="ID" />
         <column xsi:type="int" name="store_id" unsigned="true" nullable="false" comment="Magento Store ID" />
