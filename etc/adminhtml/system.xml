@@ -12,30 +12,30 @@
                     <label><![CDATA[Commission Collecting Account ID]]></label>
                     <frontend_model>MultiSafepay\Mirakl\Block\Adminhtml\Form\Field\AffiliateConditionalField</frontend_model>
                     <config_path>multisafepay/mirakl/collecting_live_account_id</config_path>
-                    <comment><![CDATA[The ID of the MultiSafepay account where commissions of the operator will be transfered]]></comment>
+                    <comment><![CDATA[The ID of the MultiSafepay account where commissions of the operator will be transferred]]></comment>
                 </field>
                 <field id="collecting_test_account_id" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label><![CDATA[Commission Collecting Test Account ID]]></label>
                     <frontend_model>MultiSafepay\Mirakl\Block\Adminhtml\Form\Field\AffiliateConditionalField</frontend_model>
                     <config_path>multisafepay/mirakl/collecting_test_account_id</config_path>
-                    <comment><![CDATA[The ID of the MultiSafepay account where commissions of the operator will be transfered]]></comment>
+                    <comment><![CDATA[The ID of the MultiSafepay account where commissions of the operator will be transferred]]></comment>
                 </field>
                 <field id="affiliate_live_api_key" translate="label" type="obscure" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label><![CDATA[Affiliate API Key]]></label>
+                    <label><![CDATA[Account API Key]]></label>
                     <frontend_model>MultiSafepay\Mirakl\Block\Adminhtml\Form\Field\AffiliateConditionalField</frontend_model>
                     <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
                     <config_path>multisafepay/mirakl/affiliate_live_api_key</config_path>
                     <comment><![CDATA[<div class="multisafepay-note-blue">
-                    Contact your account manager for your Affiliate API Key
+                    Contact your account manager for your <strong><u>Account</u></strong> API Key.
                 </div>]]></comment>
                 </field>
                 <field id="affiliate_test_api_key" translate="label" type="obscure" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label><![CDATA[Affiliate Test API Key]]></label>
+                    <label><![CDATA[Account Test API Key]]></label>
                     <frontend_model>MultiSafepay\Mirakl\Block\Adminhtml\Form\Field\AffiliateConditionalField</frontend_model>
                     <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
                     <config_path>multisafepay/mirakl/affiliate_test_api_key</config_path>
                     <comment><![CDATA[<div class="multisafepay-note-blue">
-                    Contact your account manager for your Affiliate API Key
+                    Contact your account manager for your <strong><u>Account</u></strong> API Key.
                 </div>]]></comment>
                 </field>
                 <field id="validate_affiliate_api_key" translate="label" sortOrder="35" showInDefault="1" showInWebsite="1" showInStore="1">

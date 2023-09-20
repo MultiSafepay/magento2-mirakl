@@ -17,8 +17,8 @@ namespace MultiSafepay\Mirakl\Controller\Adminhtml\Api;
 use Exception;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
-use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\App\Response\Http;
+use Magento\Framework\App\ResponseInterface;
 use MultiSafepay\ConnectCore\Util\JsonHandler;
 use MultiSafepay\Exception\InvalidDataInitializationException;
 use MultiSafepay\Mirakl\Config\Config;
@@ -71,6 +71,9 @@ class ValidateAffiliate extends Action
      */
     public function execute(): ResponseInterface
     {
+        /** @var Http $response */
+        $response = $this->getResponse();
+
         try {
             if (($data = $this->getRequest()->getParams())
                 && isset($data[self::MODE_PARAM_KEY_NAME], $data[self::API_KEY_PARAM_KEY_NAME])
@@ -79,6 +82,17 @@ class ValidateAffiliate extends Action
 
                 if (strpos($key, '****') !== false) {
                     $key = $this->config->getAffiliateApiKey((int)$data['storeId']);
+                }
+
+                if (substr($key, 0, 2) !== 'm_') {
+                    return $this->getResponse()->representJson(
+                        $this->jsonHandler->convertToJSON(
+                            [
+                                'status' => false,
+                                'content' => __('Error. Account API Key should start with "m_."'),
+                            ]
+                        )
+                    );
                 }
 
                 $this->affiliatesSdkFactory->createWithModeAndApiKey(
@@ -96,7 +110,6 @@ class ValidateAffiliate extends Action
                     'content' => __('Error. Something went wrong. Please, try again.'),
                 ];
             }
-
         } catch (InvalidDataInitializationException $invalidDataInitializationException) {
             $result = [
                 'status' => false,
@@ -113,9 +126,6 @@ class ValidateAffiliate extends Action
                 'content' => $exception->getMessage(),
             ];
         }
-
-        /** @var Http $response */
-        $response = $this->getResponse();
 
         return $response->representJson(
             $this->jsonHandler->convertToJSON($result)
