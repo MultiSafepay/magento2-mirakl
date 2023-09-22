@@ -165,4 +165,27 @@ class Logger extends CoreLogger
             )
         );
     }
+
+    /**
+     * Log an exception thrown while saving a customer debit as processed with errors
+     *
+     * @param array $processData
+     * @param Exception $exception
+     * @return void
+     */
+    public function logCustomerDebitException(array $processData, Exception $exception)
+    {
+        $this->addRecord(
+            self::ERROR,
+            sprintf(
+                '(Order ID: %1$s, Mirakl Order ID: %2$s): Error occurred: %3$s (%4$d, %5$d, %6$s)',
+                $processData['order_commercial_id'] ?? 'Unknown',
+                $processData['order_id'] ?? 'Unknown',
+                $exception->getMessage(),
+                $exception->getCode(),
+                $exception->getLine(),
+                $exception->getFile()
+            )
+        );
+    }
 }

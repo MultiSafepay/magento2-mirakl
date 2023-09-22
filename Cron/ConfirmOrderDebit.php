@@ -21,6 +21,7 @@ use MultiSafepay\Mirakl\Cron\Process\SavePayOutData;
 use MultiSafepay\Mirakl\Cron\Process\SendOrderDebitConfirmation;
 use MultiSafepay\Mirakl\Cron\Process\SetCustomerDebitAsProcessed;
 use MultiSafepay\Mirakl\Logger\Logger;
+use MultiSafepay\Mirakl\Model\CustomerDebit;
 use MultiSafepay\Mirakl\Model\CustomerDebitFactory;
 use MultiSafepay\Mirakl\Model\ResourceModel\CustomerDebit\Collection;
 use MultiSafepay\Mirakl\Model\ResourceModel\CustomerDebit\CollectionFactory as CustomerDebitCollectionFactory;
@@ -112,7 +113,7 @@ class ConfirmOrderDebit
 
         /** @var Collection $debitCollection */
         $debitCollection = $this->customerDebitCollectionFactory->create();
-        $debitCollection->filterByStatus(1);
+        $debitCollection->filterByStatus(CustomerDebit::CUSTOMER_DEBIT_STATUS_PENDING_TO_BE_PROCESSED);
 
         foreach ($debitCollection->getItems() as $debitRequest) {
             foreach ($processes as $process) {
@@ -126,6 +127,9 @@ class ConfirmOrderDebit
                         $debitRequest->getData(),
                         $exception
                     );
+
+                    $this->setCustomerDebitAsProcessed->withError($debitRequest->getData(), $exception);
+
                     break;
                 }
 

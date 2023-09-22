@@ -162,7 +162,7 @@ class Debit extends Action implements CsrfAwareActionInterface
         $customerDebit->setDebitEntityId($miraklCustomerDebitItem['debit_entity']['id']);
         $customerDebit->setCurrencyIsoCode($miraklCustomerDebitItem[$customerDebit::CURRENCY_ISO_CODE]);
         $customerDebit->setAmount($miraklCustomerDebitItem[$customerDebit::AMOUNT]);
-        $customerDebit->setStatus(1);
+        $customerDebit->setStatus($customerDebit::CUSTOMER_DEBIT_STATUS_PENDING_TO_BE_PROCESSED);
 
         $savedCustomerDebit = $this->customerDebitResourceModel->save($customerDebit);
 

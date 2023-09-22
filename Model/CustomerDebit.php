@@ -29,7 +29,12 @@ class CustomerDebit extends AbstractModel
     public const ORDER_ID = 'order_id';
     public const SHOP_ID = 'shop_id';
     public const STATUS = 'status';
+    public const OBSERVATIONS = 'observations';
     public const ORDER_LINES = 'order_lines';
+
+    public const CUSTOMER_DEBIT_STATUS_PROCESSED_SUCCESSFULLY = 0;
+    public const CUSTOMER_DEBIT_STATUS_PENDING_TO_BE_PROCESSED = 1;
+    public const CUSTOMER_DEBIT_STATUS_PROCESSED_WITH_ERRORS = 2;
 
     /**
      * @return void
@@ -190,6 +195,23 @@ class CustomerDebit extends AbstractModel
     public function setStatus(int $status): CustomerDebit
     {
         return $this->setData(self::STATUS, $status);
+    }
+
+    /**
+     * @return string
+     */
+    public function getObservations(): string
+    {
+        return (string)$this->getData(self::OBSERVATIONS);
+    }
+
+    /**
+     * @param string $observations
+     * @return CustomerDebit
+     */
+    public function setObservations(string $observations): CustomerDebit
+    {
+        return $this->setData(self::OBSERVATIONS, $observations);
     }
 
     /**

@@ -11,6 +11,7 @@
         <column xsi:type="varchar" name="shop_id" nullable="false" length="255" comment="Shop ID" />
         <column xsi:type="timestamp" name="timestamp" nullable="false" default="CURRENT_TIMESTAMP" comment="Timestamp" />
         <column xsi:type="int" name="status" unsigned="true" nullable="false" comment="Status" />
+        <column xsi:type="varchar" name="observations" nullable="false" length="255" comment="Observations" />
         <constraint xsi:type="primary" referenceId="PRIMARY">
             <column name="customer_debit_id"/>
         </constraint>

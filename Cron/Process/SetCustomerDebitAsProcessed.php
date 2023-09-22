@@ -14,8 +14,10 @@ declare(strict_types=1);
 
 namespace MultiSafepay\Mirakl\Cron\Process;
 
+use Exception;
 use Magento\Framework\Exception\AlreadyExistsException;
 use MultiSafepay\Mirakl\Cron\ProcessInterface;
+use MultiSafepay\Mirakl\Logger\Logger;
 use MultiSafepay\Mirakl\Model\CustomerDebit;
 use MultiSafepay\Mirakl\Model\ResourceModel\CustomerDebit as CustomerDebitRequestResourceModel;
 use MultiSafepay\Mirakl\Model\ResourceModel\CustomerDebit\Collection;
@@ -34,15 +36,23 @@ class SetCustomerDebitAsProcessed implements ProcessInterface
     private $customerDebitCollectionFactory;
 
     /**
+     * @var Logger
+     */
+    private $logger;
+
+    /**
      * @param CustomerDebitRequestResourceModel $customerDebitRequestResourceModel
      * @param CustomerDebitCollectionFactory $customerDebitCollectionFactory
+     * @param Logger $logger
      */
     public function __construct(
         CustomerDebitRequestResourceModel $customerDebitRequestResourceModel,
-        CustomerDebitCollectionFactory $customerDebitCollectionFactory
+        CustomerDebitCollectionFactory $customerDebitCollectionFactory,
+        Logger $logger
     ) {
         $this->customerDebitRequestResourceModel = $customerDebitRequestResourceModel;
         $this->customerDebitCollectionFactory = $customerDebitCollectionFactory;
+        $this->logger = $logger;
     }
 
     /**
@@ -59,8 +69,35 @@ class SetCustomerDebitAsProcessed implements ProcessInterface
 
         /** @var CustomerDebit $customerDebitRequest */
         $customerDebitRequest = $debitRequestCollection->getItemById($orderDebitData[CustomerDebit::CUSTOMER_DEBIT_ID]);
-        $customerDebitRequest->setStatus(0);
+        $customerDebitRequest->setStatus(CustomerDebit::CUSTOMER_DEBIT_STATUS_PROCESSED_SUCCESSFULLY);
 
         $this->customerDebitRequestResourceModel->save($customerDebitRequest);
+    }
+
+    /**
+     * Set the customer debit request as processed in database with error
+     *
+     * @param array $orderDebitData
+     * @param Exception $exception
+     * @return void
+     */
+    public function withError(array $orderDebitData, Exception $exception): void
+    {
+        /** @var Collection $debitRequestCollection */
+        $debitRequestCollection = $this->customerDebitCollectionFactory->create();
+
+        /** @var CustomerDebit $customerDebitRequest */
+        $customerDebitRequest = $debitRequestCollection->getItemById($orderDebitData[CustomerDebit::CUSTOMER_DEBIT_ID]);
+        $customerDebitRequest->setStatus(CustomerDebit::CUSTOMER_DEBIT_STATUS_PROCESSED_WITH_ERRORS);
+        $customerDebitRequest->setObservations($exception->getMessage());
+
+        try {
+            $this->customerDebitRequestResourceModel->save($customerDebitRequest);
+        } catch (Exception|AlreadyExistsException $exception) {
+            $this->logger->logCustomerDebitException(
+                $orderDebitData,
+                $exception
+            );
+        }
     }
 }
