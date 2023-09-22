@@ -1,7 +1,7 @@
 {
     "name": "multisafepay/magento2-mirakl",
     "description": "Integrate MultiSafepay payment methods into Mirakl",
-    "version": "1.0.0-RC2",
+    "version": "1.0.0-RC3",
     "type": "magento2-module",
     "license": "OSL-3.0",
     "minimum-stability": "dev",
