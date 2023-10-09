@@ -22,6 +22,15 @@
     <type name="MultiSafepay\ConnectCore\Model\Api\Builder\OrderRequestBuilder\ShoppingCartBuilder\OrderItemBuilder">
         <plugin name="multisafepay_mirakl_merchant_item_id" type="MultiSafepay\Mirakl\Plugin\ConnectCore\Model\Api\Builder\OrderRequestBuilder\ShoppingCartBuilder\OrderItemBuilderPlugin" sortOrder="1" disabled="false" />
     </type>
+    <type name="MultiSafepay\ConnectCore\Model\Api\Builder\OrderRequestBuilder\ShoppingCartBuilder">
+        <arguments>
+            <argument name="shoppingCartBuilders" xsi:type="array">
+                <item name="marketplace_shipping_total_builder" xsi:type="object">
+                    MultiSafepay\Mirakl\Builder\OrderRequestBuilder\ShoppingCartBuilder\MarketplaceShippingTotalBuilder
+                </item>
+            </argument>
+        </arguments>
+    </type>
 </config>
 
 
