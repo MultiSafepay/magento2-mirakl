@@ -120,6 +120,10 @@ class MarketplaceShippingTotalBuilder implements ShoppingCartBuilderInterface
             return 0;
         }
 
+        if (!$quote->getMiraklBaseShippingExclTax()) {
+            return 0;
+        }
+
         return round($quote->getMiraklShippingTaxAmount() / $quote->getMiraklBaseShippingExclTax() * 100);
     }
 
