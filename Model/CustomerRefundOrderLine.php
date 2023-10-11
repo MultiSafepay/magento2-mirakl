@@ -24,6 +24,7 @@ class CustomerRefundOrderLine extends AbstractModel
     public const ORDER_LINE_AMOUNT = 'order_line_amount';
     public const ORDER_LINE_ID = 'order_line_id';
     public const ORDER_LINE_QUANTITY = 'order_line_quantity';
+    public const ORDER_LINE_REFUND_ID = 'order_line_refund_id';
 
     /**
      * @return void
@@ -116,5 +117,22 @@ class CustomerRefundOrderLine extends AbstractModel
     public function setOrderLineQuantity(int $orderLineQuantity): CustomerRefundOrderLine
     {
         return $this->setData(self::ORDER_LINE_QUANTITY, $orderLineQuantity);
+    }
+
+    /**
+     * @return string
+     */
+    public function getOrderLineRefundId(): string
+    {
+        return $this->getData(self::ORDER_LINE_REFUND_ID);
+    }
+
+    /**
+     * @param string $orderLineRefundId
+     * @return CustomerRefundOrderLine
+     */
+    public function setOrderLineRefundId(string $orderLineRefundId): CustomerRefundOrderLine
+    {
+        return $this->setData(self::ORDER_LINE_REFUND_ID, $orderLineRefundId);
     }
 }

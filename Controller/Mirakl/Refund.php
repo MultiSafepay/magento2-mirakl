@@ -201,6 +201,11 @@ class Refund extends Action implements CsrfAwareActionInterface, HttpPostActionI
         $customerRefundOrderLine->setOrderLineAmount($orderLineItem[$customerRefundOrderLine::ORDER_LINE_AMOUNT]);
         $customerRefundOrderLine->setOrderLineId($orderLineItem[$customerRefundOrderLine::ORDER_LINE_ID]);
         $customerRefundOrderLine->setOrderLineQuantity($orderLineItem[$customerRefundOrderLine::ORDER_LINE_QUANTITY]);
+        $customerRefundOrderLine->setOrderLineRefundId('');
+
+        if (isset($orderLineItem['refunds']['refund'])) {
+            $customerRefundOrderLine->setOrderLineRefundId($orderLineItem['refunds']['refund'][0]['id']);
+        }
 
         $this->customerRefundOrderLineResourceModel->save($customerRefundOrderLine);
     }

@@ -19,6 +19,7 @@ use MultiSafepay\Mirakl\Model\ResourceModel\CustomerRefund as CustomerRefundReso
 
 class CustomerRefund extends AbstractModel
 {
+    public const CUSTOMER_REFUND_ID = 'customer_refund_id';
     public const AMOUNT = 'amount';
     public const CURRENCY_ISO_CODE = 'currency_iso_code';
     public const CUSTOMER_ID = 'customer_id';
@@ -27,7 +28,12 @@ class CustomerRefund extends AbstractModel
     public const PAYMENT_WORKFLOW = 'payment_workflow';
     public const SHOP_ID = 'shop_id';
     public const STATUS = 'status';
+    public const OBSERVATIONS = 'observations';
     public const ORDER_LINES = 'order_lines';
+
+    public const CUSTOMER_REFUND_STATUS_PROCESSED_SUCCESSFULLY = 0;
+    public const CUSTOMER_REFUND_STATUS_PENDING_TO_BE_PROCESSED = 1;
+    public const CUSTOMER_REFUND_STATUS_PROCESSED_WITH_ERRORS = 2;
 
     /**
      * @return void
@@ -171,6 +177,23 @@ class CustomerRefund extends AbstractModel
     public function setStatus(int $status): CustomerRefund
     {
         return $this->setData(self::STATUS, $status);
+    }
+
+    /**
+     * @return string
+     */
+    public function getObservations(): string
+    {
+        return (string)$this->getData(self::OBSERVATIONS);
+    }
+
+    /**
+     * @param string $observations
+     * @return CustomerRefund
+     */
+    public function setObservations(string $observations): CustomerRefund
+    {
+        return $this->setData(self::OBSERVATIONS, $observations);
     }
 
     /**

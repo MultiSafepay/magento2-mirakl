@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace MultiSafepay\Mirakl\Api\MultiSafepay\Sdk\Affiliates;
 
 use MultiSafepay\Api\AbstractManager;
+use MultiSafepay\Mirakl\Api\MultiSafepay\Sdk\Affiliates\FundRequest\ChargeRequest;
 use MultiSafepay\Mirakl\Api\MultiSafepay\Sdk\Affiliates\FundRequest\FundRequest;
 use MultiSafepay\Api\Base\Response;
 use Psr\Http\Client\ClientExceptionInterface;
@@ -34,6 +35,21 @@ class AffiliatesManager extends AbstractManager
             'json/accounts/' . $accountId . '/funds',
             $fundRequest,
             ['transaction' => $fundRequest->getData()]
+        );
+    }
+
+    /**
+     * @param int $accountId
+     * @param ChargeRequest $chargeRequest
+     * @return Response
+     * @throws ClientExceptionInterface
+     */
+    public function charge(int $accountId, ChargeRequest $chargeRequest): Response
+    {
+        return $this->client->createPostRequest(
+            'json/accounts/' . $accountId . '/charges',
+            $chargeRequest,
+            ['transaction' => $chargeRequest->getData()]
         );
     }
 }

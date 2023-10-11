@@ -188,4 +188,27 @@ class Logger extends CoreLogger
             )
         );
     }
+
+    /**
+     * Log an exception thrown while saving a refund as processed with errors
+     *
+     * @param array $processData
+     * @param Exception $exception
+     * @return void
+     */
+    public function logRefundException(array $processData, Exception $exception)
+    {
+        $this->addRecord(
+            self::ERROR,
+            sprintf(
+                '(Order ID: %1$s, Mirakl Order ID: %2$s): Error when processing refund: %3$s (%4$d, %5$d, %6$s)',
+                $processData['order_commercial_id'] ?? 'Unknown',
+                $processData['order_id'] ?? 'Unknown',
+                $exception->getMessage(),
+                $exception->getCode(),
+                $exception->getLine(),
+                $exception->getFile()
+            )
+        );
+    }
 }

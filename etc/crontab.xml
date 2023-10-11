@@ -4,5 +4,8 @@
         <job name="multisafepay_mirakl_confirm_debit" instance="MultiSafepay\Mirakl\Cron\ConfirmOrderDebit" method="execute">
             <schedule>*/5 * * * *</schedule>
         </job>
+        <job name="multisafepay_mirakl_confirm_refund" instance="MultiSafepay\Mirakl\Cron\ConfirmOrderRefund" method="execute">
+            <schedule>*/5 * * * *</schedule>
+        </job>
     </group>
 </config>

@@ -30,4 +30,63 @@ class Collection extends AbstractCollection
             CustomerRefundResourceModel::class
         );
     }
+
+    /**
+     * @param int $status
+     * @return $this
+     */
+    public function filterByStatus(int $status): Collection
+    {
+        $this->addFieldToFilter(CustomerRefund::STATUS, $status);
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function withOrderLines(): Collection
+    {
+        // phpcs:disable
+        $this->getSelect()->joinLeft(
+            [
+                'order_line' => $this->getTable('multisafepay_mirakl_customer_refund_order_line')
+            ],
+            'main_table.customer_refund_id = order_line.customer_refund_id',
+            [
+                'order_lines' => new \Zend_Db_Expr(
+                    'GROUP_CONCAT(DISTINCT CONCAT_WS(":", order_line.customer_refund_order_line_id, order_line.customer_refund_id, order_line.offer_id, order_line.order_line_amount, order_line.order_line_id, order_line.order_line_refund_id, order_line.order_line_quantity) SEPARATOR ",")'
+                )
+            ]
+        )->group('main_table.customer_refund_id');
+        // phpcs:enable
+
+        // Set the results of order_lines into an array at item level.
+        $orderLines = [];
+
+        /** @var CustomerRefund $item */
+        foreach ($this->getItems() as $item) {
+            $data = $item->getData();
+            if (isset($data['order_lines'])) {
+                $orderLines[$data['customer_refund_id']] = [];
+                $lines = explode(',', $data['order_lines']);
+                foreach ($lines as $line) {
+                    $parts = explode(':', $line);
+                    $orderLines[$data['customer_refund_id']][] = [
+                        'customer_refund_order_line_id' => $parts[0],
+                        'customer_refund_id' => $parts[1],
+                        'offer_id' => $parts[2],
+                        'order_line_amount' => $parts[3],
+                        'order_line_id' => $parts[4],
+                        'order_line_refund_id' => $parts[5],
+                        'order_line_quantity' => $parts[6]
+                    ];
+                }
+            }
+            $item->setOrderLines($orderLines[$data['customer_refund_id']]);
+        }
+
+        $this->save();
+
+        return $this;
+    }
 }

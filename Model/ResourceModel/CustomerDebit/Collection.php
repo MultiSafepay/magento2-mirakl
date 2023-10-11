@@ -40,4 +40,14 @@ class Collection extends AbstractCollection
         $this->addFieldToFilter(CustomerDebit::STATUS, $status);
         return $this;
     }
+
+    /**
+     * @param string $orderId
+     * @return $this
+     */
+    public function filterByOrderId(string $orderId): Collection
+    {
+        $this->addFieldToFilter(CustomerDebit::ORDER_ID, $orderId);
+        return $this;
+    }
 }
