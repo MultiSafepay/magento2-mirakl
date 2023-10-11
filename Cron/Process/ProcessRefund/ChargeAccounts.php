@@ -84,7 +84,7 @@ class ChargeAccounts
         $commissionAccountId = $this->config->getCollectingAccountId($storeId);
         $this->charge(
             $orderRefundData,
-            $chargeBack[PrepareRefundData::SELLER_CHARGEBACK_AMOUNT],
+            $chargeBack[PrepareRefundData::COMMISSION_CHARGEBACK_AMOUNT],
             $commissionAccountId,
             $storeId
         );
@@ -95,7 +95,7 @@ class ChargeAccounts
         );
         $this->charge(
             $orderRefundData,
-            $chargeBack[PrepareRefundData::COMMISSION_CHARGEBACK_AMOUNT],
+            $chargeBack[PrepareRefundData::SELLER_CHARGEBACK_AMOUNT],
             $sellerAccountId,
             $storeId
         );
