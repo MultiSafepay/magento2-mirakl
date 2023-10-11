@@ -51,11 +51,16 @@ php bin/magento cache:flush
   - Read Only
   - Required Field: yes. 
   - Value for existing stores, must be empty, but that value must be filled in the store configuration page.
-- Browse to Administration > Technical Settings > System Integrations > Customer Debit and configure the debit connector with the following settings:
+- Browse to Settings > Platform > Technical Settings > System Integrations > Customer Debit and configure the debit connector with the following settings:
   - Transmission type: HTTP
   - URL: {OPERATOR-URL}/multisafepay/mirakl/debit
   - Method: POST
   - Content Type: Json
+- Browse to Settings > Platform > Technical Settings > System Integrations > Customer Refund and configure the refund connector with the following settings:
+    - Transmission type: HTTP
+    - URL: {OPERATOR-URL}/multisafepay/mirakl/refund
+    - Method: POST
+    - Content Type: Json
 
 **In Magento:**
 - Browse to Stores > Settings > Configuration > MultiSafepay > Mirakl.
