@@ -12,10 +12,9 @@
 
 declare(strict_types=1);
 
-namespace MultiSafepay\Mirakl\Api\MultiSafepay\Sdk\Affiliates\FundRequest;
+namespace MultiSafepay\Mirakl\Api\MultiSafepay\Sdk\Affiliates\Request;
 
 use MultiSafepay\Api\Base\RequestBody;
-use MultiSafepay\Api\Base\RequestBodyInterface;
 use MultiSafepay\Api\Transactions\OrderRequest\Arguments\Description;
 use MultiSafepay\ValueObject\Money;
 

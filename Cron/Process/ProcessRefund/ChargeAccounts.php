@@ -17,7 +17,7 @@ namespace MultiSafepay\Mirakl\Cron\Process\ProcessRefund;
 use Exception;
 use Magento\Framework\Exception\NoSuchEntityException;
 use MultiSafepay\ConnectCore\Util\OrderUtil;
-use MultiSafepay\Mirakl\Api\MultiSafepay\Sdk\Affiliates\FundRequest\ChargeRequest;
+use MultiSafepay\Mirakl\Api\MultiSafepay\Sdk\Affiliates\Request\ChargeRequest;
 use MultiSafepay\Mirakl\Config\Config;
 use MultiSafepay\Mirakl\Factory\AffiliatesSdkFactory;
 use MultiSafepay\Mirakl\Model\CustomerRefund;

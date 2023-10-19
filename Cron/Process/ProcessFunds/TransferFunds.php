@@ -17,7 +17,7 @@ namespace MultiSafepay\Mirakl\Cron\Process\ProcessFunds;
 use Exception;
 use Magento\Framework\Exception\AlreadyExistsException;
 use Magento\Framework\Exception\NoSuchEntityException;
-use MultiSafepay\Mirakl\Api\MultiSafepay\Sdk\Affiliates\FundRequest\FundRequest;
+use MultiSafepay\Mirakl\Api\MultiSafepay\Sdk\Affiliates\Request\FundRequest;
 use MultiSafepay\Mirakl\Config\Config;
 use MultiSafepay\Mirakl\Factory\AffiliatesSdkFactory;
 use MultiSafepay\Mirakl\Logger\Logger;

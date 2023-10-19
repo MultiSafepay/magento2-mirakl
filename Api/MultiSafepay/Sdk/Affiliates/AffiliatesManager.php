@@ -15,8 +15,8 @@ declare(strict_types=1);
 namespace MultiSafepay\Mirakl\Api\MultiSafepay\Sdk\Affiliates;
 
 use MultiSafepay\Api\AbstractManager;
-use MultiSafepay\Mirakl\Api\MultiSafepay\Sdk\Affiliates\FundRequest\ChargeRequest;
-use MultiSafepay\Mirakl\Api\MultiSafepay\Sdk\Affiliates\FundRequest\FundRequest;
+use MultiSafepay\Mirakl\Api\MultiSafepay\Sdk\Affiliates\Request\ChargeRequest;
+use MultiSafepay\Mirakl\Api\MultiSafepay\Sdk\Affiliates\Request\FundRequest;
 use MultiSafepay\Api\Base\Response;
 use Psr\Http\Client\ClientExceptionInterface;
 
