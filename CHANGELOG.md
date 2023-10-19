@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0-RC6] - 2023-10-19
+### Added
+PLGMIRAKL-58: Add more logs to the refund cron process
+
+### Fixed
+PLGMIRAKL-67: Fix ShoppingCart refund
+
+### Changed
+PLGMIRAKL-60: Rename "FundRequest" directory as Request
+
 ## [1.0.0-RC5] - 2023-10-11
 ### Fixed
 - PLGMIRAKL-64: Fix an error where a refund chargeback transaction, is being done to the wrong MultiSafepay account
