@@ -21,6 +21,7 @@ use Mirakl\MMP\Common\Domain\Order\Refund;
 use Mirakl\MMP\Common\Domain\Order\Tax\OrderTaxAmount;
 use Mirakl\MMP\FrontOperator\Domain\Order\OrderLine;
 use MultiSafepay\ConnectCore\Util\OrderUtil;
+use MultiSafepay\Mirakl\Logger\Logger;
 use MultiSafepay\Mirakl\Model\CustomerRefund;
 use MultiSafepay\Mirakl\Model\PayOutRefund;
 use MultiSafepay\Mirakl\Model\PayOutRefundFactory;
@@ -30,6 +31,9 @@ use MultiSafepay\Mirakl\Model\ResourceModel\PayOutRefund as PayOutRefundResource
 use MultiSafepay\Mirakl\Model\ResourceModel\PayOutRefundOrderLine as PayOutRefundOrderlineResourceModel;
 use MultiSafepay\Mirakl\Util\MiraklOrderUtil;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class SavePayOutRefundData
 {
     /**
@@ -63,12 +67,18 @@ class SavePayOutRefundData
     private $payOutRefundOrderLineResourceModel;
 
     /**
+     * @var Logger
+     */
+    private $logger;
+
+    /**
      * @param PayOutRefundFactory $payOutRefundFactory
      * @param PayOutRefundOrderLineFactory $payOutRefundOrderLineFactory
      * @param PayOutRefundResourceModel $payOutRefundResourceModel
      * @param PayOutRefundOrderlineResourceModel $payOutRefundOrderLineResourceModel
      * @param MiraklOrderUtil $miraklOrderUtil
      * @param OrderUtil $orderUtil
+     * @param Logger $logger
      */
     public function __construct(
         PayOutRefundFactory $payOutRefundFactory,
@@ -76,7 +86,8 @@ class SavePayOutRefundData
         PayOutRefundResourceModel $payOutRefundResourceModel,
         PayOutRefundOrderlineResourceModel $payOutRefundOrderLineResourceModel,
         MiraklOrderUtil $miraklOrderUtil,
-        OrderUtil $orderUtil
+        OrderUtil $orderUtil,
+        Logger $logger
     ) {
         $this->payOutRefundFactory = $payOutRefundFactory;
         $this->payOutRefundOrderLineFactory = $payOutRefundOrderLineFactory;
@@ -84,6 +95,7 @@ class SavePayOutRefundData
         $this->payOutRefundOrderLineResourceModel = $payOutRefundOrderLineResourceModel;
         $this->miraklOrderUtil = $miraklOrderUtil;
         $this->orderUtil = $orderUtil;
+        $this->logger = $logger;
     }
 
     /**
@@ -111,6 +123,11 @@ class SavePayOutRefundData
         $payoutRefund->setFullyRefunded((bool)$miraklOrder->getData(PayOutRefund::FULLY_REFUNDED));
 
         $this->payOutRefundResourceModel->save($payoutRefund);
+
+        $this->logger->logCronProcessInfo(
+            'Saved new entry in multisafepay_mirakl_payout_refund',
+            $payoutRefund->toArray()
+        );
 
         $orderLines = $miraklOrder->getOrderLines();
 
@@ -140,6 +157,11 @@ class SavePayOutRefundData
                 $payoutRefundOrderLine->setStatus(1);
 
                 $this->payOutRefundOrderLineResourceModel->save($payoutRefundOrderLine);
+
+                $this->logger->logCronProcessInfo(
+                    'Saved new entry in multisafepay_mirakl_payout_refund_order_line',
+                    $refund->toArray()
+                );
             }
         }
     }

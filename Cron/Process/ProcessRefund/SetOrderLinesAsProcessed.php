@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace MultiSafepay\Mirakl\Cron\Process\ProcessRefund;
 
 use Magento\Framework\Exception\AlreadyExistsException;
+use MultiSafepay\Mirakl\Logger\Logger;
 use MultiSafepay\Mirakl\Model\PayOutRefundOrderLine;
 use MultiSafepay\Mirakl\Model\ResourceModel\PayOutRefundOrderLine\Collection as PayOutRefundOrderLineCollection;
 use MultiSafepay\Mirakl\Model\ResourceModel\PayOutRefundOrderLine\CollectionFactory as PayOutRefundOrderLineFactory;
@@ -33,15 +34,23 @@ class SetOrderLinesAsProcessed
     private $payOutRefundOrderLineUtil;
 
     /**
+     * @var Logger
+     */
+    private $logger;
+
+    /**
      * @param PayOutRefundOrderLineFactory $payOutRefundOrderLineCollectionFactory
      * @param PayOutRefundOrderLineUtil $payOutRefundOrderLineUtil
+     * @param Logger $logger
      */
     public function __construct(
         PayOutRefundOrderLineFactory $payOutRefundOrderLineCollectionFactory,
-        PayOutRefundOrderLineUtil $payOutRefundOrderLineUtil
+        PayOutRefundOrderLineUtil $payOutRefundOrderLineUtil,
+        Logger $logger
     ) {
         $this->payOutRefundOrderLineCollectionFactory = $payOutRefundOrderLineCollectionFactory;
         $this->payOutRefundOrderLineUtil = $payOutRefundOrderLineUtil;
+        $this->logger = $logger;
     }
 
     /**
@@ -65,6 +74,11 @@ class SetOrderLinesAsProcessed
                 }
 
                 $this->payOutRefundOrderLineUtil->setOrderLineAsProcessed($payOutRefundOrderLine->getId());
+
+                $this->logger->logCronProcessInfo(
+                    'multisafepay_mirakl_payout_refund_order_line status updated',
+                    $orderLine
+                );
             }
         }
     }

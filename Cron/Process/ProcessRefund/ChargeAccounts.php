@@ -20,6 +20,7 @@ use MultiSafepay\ConnectCore\Util\OrderUtil;
 use MultiSafepay\Mirakl\Api\MultiSafepay\Sdk\Affiliates\Request\ChargeRequest;
 use MultiSafepay\Mirakl\Config\Config;
 use MultiSafepay\Mirakl\Factory\AffiliatesSdkFactory;
+use MultiSafepay\Mirakl\Logger\Logger;
 use MultiSafepay\Mirakl\Model\CustomerRefund;
 use MultiSafepay\Mirakl\Util\AccountUtil;
 use MultiSafepay\ValueObject\Money;
@@ -48,21 +49,29 @@ class ChargeAccounts
     private $accountUtil;
 
     /**
+     * @var Logger
+     */
+    private $logger;
+
+    /**
      * @param AccountUtil $accountUtil
      * @param AffiliatesSdkFactory $affiliatesSdkFactory
      * @param Config $config
      * @param OrderUtil $orderUtil
+     * @param Logger $logger
      */
     public function __construct(
         AccountUtil $accountUtil,
         AffiliatesSdkFactory $affiliatesSdkFactory,
         Config $config,
-        OrderUtil $orderUtil
+        OrderUtil $orderUtil,
+        Logger $logger
     ) {
         $this->accountUtil = $accountUtil;
         $this->affiliatesSdkFactory = $affiliatesSdkFactory;
         $this->config = $config;
         $this->orderUtil = $orderUtil;
+        $this->logger = $logger;
     }
 
     /**
@@ -89,6 +98,8 @@ class ChargeAccounts
             $storeId
         );
 
+        $this->logger->logCronProcessInfo('Commission charged', [$orderRefundData, $chargeBack]);
+
         // Charge seller
         $sellerAccountId = $this->accountUtil->getSellerMultiSafepayAccountId(
             (int)$orderRefundData[CustomerRefund::SHOP_ID]
@@ -99,6 +110,8 @@ class ChargeAccounts
             $sellerAccountId,
             $storeId
         );
+
+        $this->logger->logCronProcessInfo('Seller charged', [$orderRefundData, $chargeBack]);
     }
 
     /**

@@ -16,6 +16,7 @@ namespace MultiSafepay\Mirakl\Cron\Process;
 
 use Mirakl\MMP\FrontOperator\Request\Payment\Refund\ConfirmOrderRefundRequest;
 use MultiSafepay\Mirakl\Api\Mirakl\Client\FrontApiClient as MiraklFrontApiClient;
+use MultiSafepay\Mirakl\Logger\Logger;
 
 class SendRefundConfirmation
 {
@@ -25,12 +26,20 @@ class SendRefundConfirmation
     private $miraklFrontApiClient;
 
     /**
+     * @var Logger
+     */
+    private $logger;
+
+    /**
      * @param MiraklFrontApiClient $miraklFrontApiClient
+     * @param Logger $logger
      */
     public function __construct(
-        MiraklFrontApiClient $miraklFrontApiClient
+        MiraklFrontApiClient $miraklFrontApiClient,
+        Logger $logger
     ) {
         $this->miraklFrontApiClient = $miraklFrontApiClient;
+        $this->logger = $logger;
     }
 
     /**
@@ -53,6 +62,10 @@ class SendRefundConfirmation
             $request = new ConfirmOrderRefundRequest($input);
 
             $miraklFrontApiClient->confirmOrderRefund($request);
+            $this->logger->logCronProcessInfo(
+                'confirmOrderRefund Request send to Mirakl',
+                $request->toArray()
+            );
         }
     }
 }

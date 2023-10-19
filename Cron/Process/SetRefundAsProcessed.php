@@ -73,6 +73,11 @@ class SetRefundAsProcessed
         $customerRefundRequest->setStatus(CustomerRefund::CUSTOMER_REFUND_STATUS_PROCESSED_SUCCESSFULLY);
 
         $this->customerRefundResourceModel->save($customerRefundRequest);
+
+        $this->logger->logCronProcessInfo(
+            'multisafepay_mirakl_customer_refund status updated',
+            $orderRefundData
+        );
     }
 
     /**

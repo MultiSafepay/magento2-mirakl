@@ -21,6 +21,7 @@ use MultiSafepay\Api\Transactions\RefundRequest;
 use MultiSafepay\ConnectCore\Factory\SdkFactory;
 use MultiSafepay\ConnectCore\Util\OrderUtil;
 use MultiSafepay\Exception\ApiException;
+use MultiSafepay\Mirakl\Logger\Logger;
 use MultiSafepay\ValueObject\CartItem;
 use MultiSafepay\ValueObject\Money;
 use Psr\Http\Client\ClientExceptionInterface;
@@ -38,15 +39,23 @@ class RefundTransaction
     private $orderUtil;
 
     /**
+     * @var Logger
+     */
+    private $logger;
+
+    /**
      * @param SdkFactory $sdkFactory
      * @param OrderUtil $orderUtil
+     * @param Logger $logger
      */
     public function __construct(
         SdkFactory $sdkFactory,
-        OrderUtil $orderUtil
+        OrderUtil $orderUtil,
+        Logger $logger
     ) {
         $this->sdkFactory = $sdkFactory;
         $this->orderUtil = $orderUtil;
+        $this->logger = $logger;
     }
 
     /**
@@ -78,11 +87,15 @@ class RefundTransaction
             $refundRequest->getCheckoutData()->addItem($item);
             $transactionManager->refund($transaction, $refundRequest);
 
+            $this->logger->logCronProcessInfo('Shopping cart refund done', $refundRequest->getData());
+
             return;
         }
 
         $refundRequest->addMoney(new Money($amount * 100, $isoCode));
         $refundRequest->addDescriptionText('Refund for order: ' . $orderCommercialId);
         $transactionManager->refund($transaction, $refundRequest);
+
+        $this->logger->logCronProcessInfo('Amount refund done', $refundRequest->getData());
     }
 }
