@@ -6,13 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.0.0-RC6] - 2023-10-19
 ### Added
-PLGMIRAKL-58: Add more logs to the refund cron process
+- PLGMIRAKL-58: Add more logs to the refund cron process
 
 ### Fixed
-PLGMIRAKL-67: Fix ShoppingCart refund
+- PLGMIRAKL-67: Fix ShoppingCart refund
 
 ### Changed
-PLGMIRAKL-60: Rename "FundRequest" directory as Request
+- PLGMIRAKL-60: Rename "FundRequest" directory as Request
 
 ## [1.0.0-RC5] - 2023-10-11
 ### Fixed
