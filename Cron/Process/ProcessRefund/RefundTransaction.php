@@ -72,9 +72,10 @@ class RefundTransaction
 
         $transactionManager = $this->sdkFactory->create((int)$storeId)->getTransactionManager();
         $transaction = $transactionManager->get($orderCommercialId);
-        $refundRequest = new RefundRequest();
 
         if ($transaction->requiresShoppingCart()) {
+            $refundRequest = $transactionManager->createRefundRequest($transaction);
+
             $item = new CartItem();
 
             $item->addDescription('Refund for order: ' . $orderCommercialId);
@@ -82,7 +83,7 @@ class RefundTransaction
             $item->addMerchantItemId('adjustment-' . (new DateTime())->getTimestamp());
             $item->addQuantity(1);
             $item->addTaxRate(0);
-            $item->addUnitPrice((new Money($amount, $isoCode))->negative());
+            $item->addUnitPrice((new Money($amount * 100, $isoCode))->negative());
 
             $refundRequest->getCheckoutData()->addItem($item);
             $transactionManager->refund($transaction, $refundRequest);
@@ -92,6 +93,7 @@ class RefundTransaction
             return;
         }
 
+        $refundRequest = new RefundRequest();
         $refundRequest->addMoney(new Money($amount * 100, $isoCode));
         $refundRequest->addDescriptionText('Refund for order: ' . $orderCommercialId);
         $transactionManager->refund($transaction, $refundRequest);
