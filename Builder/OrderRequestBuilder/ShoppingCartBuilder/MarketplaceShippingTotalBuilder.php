@@ -116,11 +116,11 @@ class MarketplaceShippingTotalBuilder implements ShoppingCartBuilderInterface
      */
     private function getTaxRate(CartInterface $quote): float
     {
-        if (!$quote->getMiraklShippingTaxAmount()) {
+        if (!(float)$quote->getMiraklShippingTaxAmount()) {
             return 0;
         }
 
-        if (!$quote->getMiraklBaseShippingExclTax()) {
+        if (!(float)$quote->getMiraklBaseShippingExclTax()) {
             return 0;
         }
 
