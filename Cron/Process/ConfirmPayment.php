@@ -76,6 +76,17 @@ class ConfirmPayment implements ProcessInterface
             throw (new CronProcessException('Order amount is higher than transaction amount'));
         }
 
+        // Check if transaction is partial_refunded
+        if ($transaction->getStatus() === Transaction::PARTIAL_REFUNDED) {
+            $amount = ($transaction->getAmount() / 100) - ($transaction->getAmountRefunded() / 100);
+
+            if ((float)$orderDebitData[CustomerDebit::AMOUNT] > $amount) {
+                throw (new CronProcessException('Order amount is higher than current transaction amount'));
+            }
+
+            return;
+        }
+
         // Check if transaction is completed
         if ($transaction->getStatus() !== Transaction::COMPLETED) {
             throw (new CronProcessException('Transaction status is not completed'));
