@@ -61,12 +61,12 @@ class Config extends CoreConfig
      * Return the commission collecting account ID, according the selected environment
      *
      * @param null $storeId
-     * @return int
+     * @return string
      */
-    public function getCollectingAccountId($storeId = null): int
+    public function getCollectingAccountId($storeId = null): string
     {
         return !$this->isLiveMode($storeId)
-            ? (int)$this->getMiraklValue(self::COLLECTING_TEST_ACCOUNT_ID, $storeId)
-            : (int)$this->getMiraklValue(self::COLLECTING_LIVE_ACCOUNT_ID, $storeId);
+            ? (string)$this->getMiraklValue(self::COLLECTING_TEST_ACCOUNT_ID, $storeId)
+            : (string)$this->getMiraklValue(self::COLLECTING_LIVE_ACCOUNT_ID, $storeId);
     }
 }

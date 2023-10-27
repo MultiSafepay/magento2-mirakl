@@ -150,13 +150,13 @@ class TransferFunds
      *
      * @param array $data
      * @param float $amount
-     * @param int $accountId
+     * @param string $accountId
      * @param array $additionalData
      * @return void
      * @throws ClientExceptionInterface
      * @throws Exception
      */
-    private function transferFunds(array $data, float $amount, int $accountId, array $additionalData = []): void
+    private function transferFunds(array $data, float $amount, string $accountId, array $additionalData = []): void
     {
         $affiliatesSdk = $this->affiliatesSdkFactory->createAffiliatesSdk(
             (int)$data['payOutData']['store_id']

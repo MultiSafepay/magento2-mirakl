@@ -119,13 +119,13 @@ class ChargeAccounts
      *
      * @param array $orderRefundData
      * @param float $amount
-     * @param int $accountId
+     * @param string $accountId
      * @param int $storeId
      * @return void
      * @throws ClientExceptionInterface
      * @throws Exception
      */
-    private function charge(array $orderRefundData, float $amount, int $accountId, int $storeId)
+    private function charge(array $orderRefundData, float $amount, string $accountId, int $storeId)
     {
         $currencyIsoCode = $orderRefundData[CustomerRefund::CURRENCY_ISO_CODE];
         $orderId = $orderRefundData[CustomerRefund::ORDER_ID];

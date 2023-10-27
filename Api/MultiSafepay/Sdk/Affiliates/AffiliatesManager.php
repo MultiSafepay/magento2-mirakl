@@ -24,12 +24,12 @@ class AffiliatesManager extends AbstractManager
 {
 
     /**
-     * @param int $accountId
+     * @param string $accountId
      * @param FundRequest $fundRequest
      * @return Response
      * @throws ClientExceptionInterface
      */
-    public function fund(int $accountId, FundRequest $fundRequest): Response
+    public function fund(string $accountId, FundRequest $fundRequest): Response
     {
         return $this->client->createPostRequest(
             'json/accounts/' . $accountId . '/funds',
@@ -39,12 +39,12 @@ class AffiliatesManager extends AbstractManager
     }
 
     /**
-     * @param int $accountId
+     * @param string $accountId
      * @param ChargeRequest $chargeRequest
      * @return Response
      * @throws ClientExceptionInterface
      */
-    public function charge(int $accountId, ChargeRequest $chargeRequest): Response
+    public function charge(string $accountId, ChargeRequest $chargeRequest): Response
     {
         return $this->client->createPostRequest(
             'json/accounts/' . $accountId . '/charges',

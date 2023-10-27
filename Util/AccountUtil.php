@@ -47,10 +47,10 @@ class AccountUtil
      * Return the MultiSafepay account ID from Mirakl using the S20 Mirakl endpoint
      *
      * @param int $miraklShopId
-     * @return int
+     * @return string
      * @throws NoSuchEntityException
      */
-    public function getSellerMultiSafepayAccountId(int $miraklShopId): int
+    public function getSellerMultiSafepayAccountId(int $miraklShopId): string
     {
         try {
             $shopRequest = $this->shopRequest->getById($miraklShopId);
@@ -60,7 +60,7 @@ class AccountUtil
             throw new NoSuchEntityException(__('Requested order doesn\'t exist'));
         }
 
-        return (int)$this->getMultiSafepayAccountIdFromAdditionalValues(
+        return (string)$this->getMultiSafepayAccountIdFromAdditionalValues(
             $shopInfo->first()->getAdditionalFieldValues()->getItems()
         );
     }
