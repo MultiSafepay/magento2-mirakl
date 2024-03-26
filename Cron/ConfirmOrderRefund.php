@@ -17,6 +17,7 @@ namespace MultiSafepay\Mirakl\Cron;
 use Exception;
 use Magento\Framework\Exception\AlreadyExistsException;
 use Magento\Framework\Exception\NoSuchEntityException;
+use MultiSafepay\Exception\ApiException;
 use MultiSafepay\Mirakl\Cron\Process\ProcessRefund;
 use MultiSafepay\Mirakl\Cron\Process\SavePayOutRefundData;
 use MultiSafepay\Mirakl\Cron\Process\SendRefundConfirmation;
@@ -26,7 +27,11 @@ use MultiSafepay\Mirakl\Logger\Logger;
 use MultiSafepay\Mirakl\Model\CustomerRefund;
 use MultiSafepay\Mirakl\Model\ResourceModel\CustomerRefund\Collection;
 use MultiSafepay\Mirakl\Model\ResourceModel\CustomerRefund\CollectionFactory as CustomerRefundCollectionFactory;
+use Psr\Http\Client\ClientExceptionInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class ConfirmOrderRefund
 {
     /**
@@ -111,15 +116,29 @@ class ConfirmOrderRefund
         $refundCollection->filterByStatus(CustomerRefund::CUSTOMER_REFUND_STATUS_PENDING_TO_BE_PROCESSED)
             ->withOrderLines();
 
+        $refundResponse = [];
+
         foreach ($refundCollection->getItems() as $refundRequest) {
             foreach ($processes as $process) {
                 $this->logger->logCronProcessStep(get_class($process), $refundRequest->getData(), 'Process started');
 
                 try {
-                    $process->execute($refundRequest->getData());
-                } catch (AlreadyExistsException|NoSuchEntityException|Exception $exception) {
-                    $this->logger->logCronProcessException(get_class($process), $refundRequest->getData(), $exception);
-                    $this->setRefundAsProcessed->withError($refundRequest->getData(), $exception);
+                    switch ($process) {
+                        case $this->processRefund:
+                            $refundResponse = $this->processRefund->execute($refundRequest->getData());
+                            break;
+
+                        case $this->sendRefundConfirmation:
+                            $this->sendRefundConfirmation->execute($refundRequest->getData(), $refundResponse);
+                            break;
+
+                        default:
+                            $process->execute($refundRequest->getData());
+                    }
+                } catch (AlreadyExistsException|NoSuchEntityException|Exception|ClientExceptionInterface|
+                ApiException $e) {
+                    $this->logger->logCronProcessException(get_class($process), $refundRequest->getData(), $e);
+                    $this->setRefundAsProcessed->withError($refundRequest->getData(), $e);
 
                     break;
                 }

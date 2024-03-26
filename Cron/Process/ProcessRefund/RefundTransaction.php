@@ -61,12 +61,17 @@ class RefundTransaction
     /**
      * Refund the transaction amount
      *
-     * @throws NoSuchEntityException
+     * @param string $orderCommercialId
+     * @param float $amount
+     * @param string $isoCode
+     *
+     * @return array
+     *
      * @throws ClientExceptionInterface
-     * @throws ApiException
+     * @throws NoSuchEntityException
      * @throws Exception
      */
-    public function execute(string $orderCommercialId, float $amount, string $isoCode)
+    public function execute(string $orderCommercialId, float $amount, string $isoCode): array
     {
         $storeId = $this->orderUtil->getOrderByIncrementId($orderCommercialId)->getStoreId();
 
@@ -86,18 +91,20 @@ class RefundTransaction
             $item->addUnitPrice((new Money($amount * 100, $isoCode))->negative());
 
             $refundRequest->getCheckoutData()->addItem($item);
-            $transactionManager->refund($transaction, $refundRequest);
+            $refund = $transactionManager->refund($transaction, $refundRequest);
 
             $this->logger->logCronProcessInfo('Shopping cart refund done', $refundRequest->getData());
 
-            return;
+            return $refund->getResponseData();
         }
 
         $refundRequest = new RefundRequest();
         $refundRequest->addMoney(new Money($amount * 100, $isoCode));
         $refundRequest->addDescriptionText('Refund for order: ' . $orderCommercialId);
-        $transactionManager->refund($transaction, $refundRequest);
+        $refund = $transactionManager->refund($transaction, $refundRequest);
 
         $this->logger->logCronProcessInfo('Amount refund done', $refundRequest->getData());
+
+        return $refund->getResponseData();
     }
 }

@@ -68,19 +68,19 @@ class ProcessRefund
      * Charge the amount from the seller and charge the commission amount
      *
      * @param array $orderRefundData
-     * @return void
+     * @return array
      * @throws NoSuchEntityException
      * @throws Exception
      * @throws ClientExceptionInterface
      * @throws ApiException
      */
-    public function execute(array $orderRefundData)
+    public function execute(array $orderRefundData): array
     {
         $chargeBack = $this->prepareRefundData->execute($orderRefundData);
 
         $this->chargeAccounts->execute($orderRefundData, $chargeBack);
         $this->setOrderLinesAsProcessed->execute($orderRefundData);
-        $this->refundTransaction->execute(
+        return $this->refundTransaction->execute(
             $orderRefundData[CustomerRefund::ORDER_COMMERCIAL_ID],
             array_sum($chargeBack),
             $orderRefundData[CustomerRefund::CURRENCY_ISO_CODE]
