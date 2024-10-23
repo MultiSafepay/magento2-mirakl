@@ -118,7 +118,8 @@ class ProcessFunds implements ProcessInterface
                     $refundData = $this->refund->buildData($orderLine, $refundData);
                 }
 
-                if ($orderLine[PayOutOrderLine::MIRAKL_ORDER_STATUS] === OrderState::WAITING_DEBIT_PAYMENT) {
+                if ($orderLine[PayOutOrderLine::MIRAKL_ORDER_STATUS] === OrderState::SHIPPED ||
+                    $orderLine[PayOutOrderLine::MIRAKL_ORDER_STATUS] === OrderState::WAITING_DEBIT_PAYMENT) {
                     $transferFundsData = $this->transferFunds->buildData($orderLine, $transferFundsData);
                 }
             }

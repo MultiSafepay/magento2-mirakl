@@ -56,14 +56,22 @@ php bin/magento cache:flush
   - Method: POST
   - Content Type: Json
 - Browse to Settings > Platform > Technical Settings > System Integrations > Customer Refund and configure the refund connector with the following settings:
-    - Transmission type: HTTP
-    - URL: {OPERATOR-URL}/multisafepay/mirakl/refund
-    - Method: POST
-    - Content Type: Json
+  - Transmission type: HTTP
+  - URL: {OPERATOR-URL}/multisafepay/mirakl/refund
+  - Method: POST
+  - Content Type: Json
+- Browse to Settings > Platform > Technical Settings > Webhooks > Add a webhook
+  - Type: Orders
+  - Name: MultiSafepay Update Orders
+  - Connector type: HTTP
+  - URL: {OPERATOR-URL}/multisafepay/mirakl/webhook
+  - Authentication method: Authorization token
+  - Authentication token: Define a secret key
 
 **In Magento:**
 - Browse to Stores > Settings > Configuration > MultiSafepay > Mirakl.
   - Fill the required data; according the environment previously setup in MultiSafepay general settings.
+  - Fill the Webhook secret key used in the webhook configuration in Mirakl.
 - Browse to Stores > Settings > Configuration > Mirakl > Connector.
   - On "Order Workflow" section, in field "Trigger on Statuses", select "Closed" and "Processing".
 

@@ -15,27 +15,25 @@ declare(strict_types=1);
 namespace MultiSafepay\Mirakl\Cron\Process;
 
 use Exception;
-use Magento\Framework\Exception\NoSuchEntityException;
 use MultiSafepay\Mirakl\Exception\CronProcessException;
 use MultiSafepay\Mirakl\Model\CustomerDebit;
 use MultiSafepay\Mirakl\Model\CustomerRefund;
-use MultiSafepay\Mirakl\Model\ResourceModel\CustomerDebit\Collection;
-use MultiSafepay\Mirakl\Model\ResourceModel\CustomerDebit\CollectionFactory as CustomerDebitCollectionFactory;
+use MultiSafepay\Mirakl\Util\CustomerDebitUtil;
 
 class VerifyRefund
 {
     /**
-     * @var CustomerDebitCollectionFactory
+     * @var CustomerDebitUtil
      */
-    private $customerDebitCollectionFactory;
+    private $customerDebitUtil;
 
     /**
-     * @param CustomerDebitCollectionFactory $customerDebitCollectionFactory
+     * @param CustomerDebitUtil $customerDebitUtil
      */
     public function __construct(
-        CustomerDebitCollectionFactory $customerDebitCollectionFactory
+        CustomerDebitUtil $customerDebitUtil
     ) {
-        $this->customerDebitCollectionFactory = $customerDebitCollectionFactory;
+        $this->customerDebitUtil = $customerDebitUtil;
     }
 
     /**
@@ -45,19 +43,7 @@ class VerifyRefund
      */
     public function execute(array $refundRequestData)
     {
-        /** @var Collection $debitCollection */
-        $debitCollection = $this->customerDebitCollectionFactory->create();
-        $debitCollection->filterByOrderId($refundRequestData[CustomerRefund::ORDER_ID]);
-
-        /** @var CustomerDebit $customerDebit */
-        $customerDebit = $debitCollection->getFirstItem();
-
-        if (!$customerDebit) {
-            throw new NoSuchEntityException(__(
-                'Refund can not be processed, unable to find CustomerDebit with Order ID:' .
-                $refundRequestData[CustomerRefund::ORDER_ID]
-            ));
-        }
+        $customerDebit = $this->customerDebitUtil->getCustomerDebit($refundRequestData[CustomerRefund::ORDER_ID]);
 
         if ($customerDebit->getStatus() !== CustomerDebit::CUSTOMER_DEBIT_STATUS_PROCESSED_SUCCESSFULLY) {
             throw new CronProcessException(

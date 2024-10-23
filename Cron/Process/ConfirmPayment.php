@@ -88,7 +88,8 @@ class ConfirmPayment implements ProcessInterface
         }
 
         // Check if transaction is completed
-        if ($transaction->getStatus() !== Transaction::COMPLETED) {
+        if ($transaction->getStatus() !== Transaction::COMPLETED &&
+            $transaction->getStatus() !== Transaction::SHIPPED) {
             throw (new CronProcessException('Transaction status is not completed'));
         }
     }

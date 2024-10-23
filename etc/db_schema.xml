@@ -123,4 +123,16 @@
         </constraint>
         <constraint xsi:type="foreign" referenceId="MULTISAFEPAY_MIRAKL_PAYOUT_REFUND_ORDER_LINE_PAYOUT_REFUND_ID_MULTISAFEPAY_MIRAKL_PAYOUT_REFUND_ID" table="multisafepay_mirakl_payout_refund_order_line" column="payout_refund_id" referenceTable="multisafepay_mirakl_payout_refund" referenceColumn="payout_refund_id" onDelete="CASCADE"/>
     </table>
+    <table name="multisafepay_mirakl_webhook" resource="default" engine="innodb" comment="Mirakl Webhook">
+        <column xsi:type="int" name="webhook_id" unsigned="true" nullable="false" identity="true" comment="ID" />
+        <column xsi:type="varchar" name="webhook_event_type" nullable="false" length="255" comment="Webhook Event Type" />
+        <column xsi:type="varchar" name="webhook_order_id" nullable="false" length="255" comment="Webhook Order ID" />
+        <column xsi:type="mediumtext" name="webhook_payload" nullable="false" comment="Webhook Payload" />
+        <column xsi:type="timestamp" name="timestamp" nullable="false" default="CURRENT_TIMESTAMP" comment="Timestamp" />
+        <column xsi:type="int" name="status" unsigned="true" nullable="false" comment="Status" />
+        <column xsi:type="varchar" name="observations" nullable="false" length="255" comment="Observations" />
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="webhook_id"/>
+        </constraint>
+    </table>
 </schema>

@@ -42,6 +42,14 @@
                     <label></label>
                     <frontend_model>MultiSafepay\Mirakl\Block\Adminhtml\Config\ValidateAffiliateKeyButton</frontend_model>
                 </field>
+                <field id="webhook_secret_key" translate="label" type="obscure" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label><![CDATA[Webhook secret key]]></label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                    <config_path>multisafepay/mirakl/webhook_secret_key</config_path>
+                    <comment><![CDATA[<div class="multisafepay-note-blue">
+                    Webhook secret key configured in Mirakl.
+                </div>]]></comment>
+                </field>
             </group>
         </section>
     </system>

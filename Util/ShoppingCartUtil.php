@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace MultiSafepay\Mirakl\Util;
 
 use Magento\Sales\Api\Data\OrderItemInterface;
+use Magento\Quote\Api\Data\CartItemInterface;
 
 class ShoppingCartUtil
 {
@@ -62,5 +63,27 @@ class ShoppingCartUtil
     {
         return $this->hasMiraklSellerProducts($shoppingCartItems) &&
             $this->hasMiraklOperatorProducts($shoppingCartItems);
+    }
+
+    /**
+     * Returns true if the quote items contains products from multiple sellers
+     *
+     * @param CartItemInterface[] $shoppingCartItems
+     * @return bool
+     */
+    public function hasMultipleSellers(array $shoppingCartItems): bool
+    {
+        $shopIds = [];
+
+        foreach ($shoppingCartItems as $shoppingCartItem) {
+            if ($shoppingCartItem->hasMiraklShopId()) {
+                $shopId = $shoppingCartItem->getMiraklShopId();
+                if (!in_array($shopId, $shopIds, true)) {
+                    $shopIds[] = $shopId;
+                }
+            }
+        }
+
+        return count($shopIds) > 1;
     }
 }

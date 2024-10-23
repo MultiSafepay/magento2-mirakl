@@ -26,6 +26,7 @@ class Config extends CoreConfig
     public const COLLECTING_LIVE_ACCOUNT_ID = 'collecting_live_account_id';
     public const AFFILIATE_LIVE_API_KEY = 'affiliate_live_api_key';
     public const AFFILIATE_TEST_API_KEY = 'affiliate_test_api_key';
+    public const WEBHOOK_SECRET_KEY = 'webhook_secret_key';
 
     /**
      * Generic method to return config values from MultiSafepay Mirakl module
@@ -68,5 +69,17 @@ class Config extends CoreConfig
         return !$this->isLiveMode($storeId)
             ? (string)$this->getMiraklValue(self::COLLECTING_TEST_ACCOUNT_ID, $storeId)
             : (string)$this->getMiraklValue(self::COLLECTING_LIVE_ACCOUNT_ID, $storeId);
+    }
+
+    /**
+     * Get the webhook secret key
+     *
+     * @param null $storeId
+     * @return string
+     * @throws Exception
+     */
+    public function getWebhookSecretKey($storeId = null): string
+    {
+        return $this->encryptorUtil->decrypt((string)$this->getMiraklValue(self::WEBHOOK_SECRET_KEY, $storeId));
     }
 }

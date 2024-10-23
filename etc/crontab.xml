@@ -7,5 +7,8 @@
         <job name="multisafepay_mirakl_confirm_refund" instance="MultiSafepay\Mirakl\Cron\ConfirmOrderRefund" method="execute">
             <schedule>*/3 * * * *</schedule>
         </job>
+        <job name="multisafepay_mirakl_set_transaction_as_shipped" instance="MultiSafepay\Mirakl\Cron\SetMultiSafepayTransactionToShipped" method="execute">
+            <schedule>*/3 * * * *</schedule>
+        </job>
     </group>
 </config>

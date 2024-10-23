@@ -31,6 +31,15 @@
             </argument>
         </arguments>
     </type>
+    <type name="MultiSafepay\ConnectCore\Service\Transaction\StatusOperationManager">
+        <plugin name="multisafepay_mirakl_check_financial_status" type="MultiSafepay\Mirakl\Plugin\ConnectCore\Service\Transaction\StatusOperationManagerPlugin" sortOrder="1" disabled="false" />
+    </type>
+    <type name="Mirakl\Connector\Model\Order\Converter">
+        <plugin name="multisafepay_mirakl_order_converter" type="MultiSafepay\Mirakl\Plugin\Connector\Model\Order\ConverterPlugin" sortOrder="1" disabled="false" />
+    </type>
+    <type name="Magento\Payment\Model\MethodList">
+        <plugin name="multisafepay_mirakl_add_available_methods" type="MultiSafepay\Mirakl\Plugin\Magento\Payment\Model\MethodList\MethodListPlugin" sortOrder="1" disabled="false"  />
+    </type>
 </config>
 
 

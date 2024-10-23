@@ -16,7 +16,6 @@ namespace MultiSafepay\Mirakl\Logger;
 
 use DateTimeZone;
 use Exception;
-use Mirakl\MMP\FrontOperator\Domain\Collection\Order\OrderCollection;
 use MultiSafepay\ConnectCore\Logger\Logger as CoreLogger;
 use MultiSafepay\ConnectCore\Util\JsonHandler;
 
@@ -95,6 +94,42 @@ class Logger extends CoreLogger
             sprintf(
                 'Mirakl Refund request received: %1$s',
                 $miraklRequest
+            )
+        );
+    }
+
+    /**
+     * Log the incoming Mirakl webhook order update request
+     *
+     * @param string $miraklRequest
+     * @return void
+     */
+    public function logMiraklOrderWebhookRequest(string $miraklRequest): void
+    {
+        $this->addRecord(
+            self::INFO,
+            sprintf(
+                'Mirakl Order Webhook request received: %1$s',
+                $miraklRequest
+            )
+        );
+    }
+
+    /**
+     * Log a failed incoming Mirakl webhook order update request
+     *
+     * @param string $miraklRequest
+     * @param string $errorCode
+     * @return void
+     */
+    public function logFailedMiraklOrderWebhookRequest(string $miraklRequest, string $errorCode): void
+    {
+        $this->addRecord(
+            self::ERROR,
+            sprintf(
+                'Error processing Mirakl Order Webhook request: %1$s, HTTP Error code returned: %2$s',
+                $miraklRequest,
+                $errorCode
             )
         );
     }
@@ -204,6 +239,28 @@ class Logger extends CoreLogger
                 '(Order ID: %1$s, Mirakl Order ID: %2$s): Error when processing refund: %3$s (%4$d, %5$d, %6$s)',
                 $processData['order_commercial_id'] ?? 'Unknown',
                 $processData['order_id'] ?? 'Unknown',
+                $exception->getMessage(),
+                $exception->getCode(),
+                $exception->getLine(),
+                $exception->getFile()
+            )
+        );
+    }
+
+    /**
+     * Log an exception thrown while saving a webhook as processed with errors
+     *
+     * @param array $processData
+     * @param Exception $exception
+     * @return void
+     */
+    public function logWebhookException(array $processData, Exception $exception)
+    {
+        $this->addRecord(
+            self::ERROR,
+            sprintf(
+                '(Mirakl Order ID: %1$s): Error when processing webhook: %2$s (%3$d, %4$d, %5$s)',
+                $processData['id'] ?? 'Unknown',
                 $exception->getMessage(),
                 $exception->getCode(),
                 $exception->getLine(),

@@ -23,6 +23,7 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\Request\InvalidRequestException;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Exception\AlreadyExistsException;
+use Mirakl\MMP\Common\Domain\Payment\PaymentWorkflow;
 use MultiSafepay\ConnectCore\Util\JsonHandler;
 use MultiSafepay\Mirakl\Logger\Logger;
 use MultiSafepay\Mirakl\Model\CustomerRefund;
@@ -32,6 +33,9 @@ use MultiSafepay\Mirakl\Model\CustomerRefundOrderLineFactory;
 use MultiSafepay\Mirakl\Model\ResourceModel\CustomerRefund as CustomerRefundResourceModel;
 use MultiSafepay\Mirakl\Model\ResourceModel\CustomerRefundOrderLine as CustomerRefundOrderLineResourceModel;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class Refund extends Action implements CsrfAwareActionInterface, HttpPostActionInterface
 {
     /**
@@ -143,7 +147,9 @@ class Refund extends Action implements CsrfAwareActionInterface, HttpPostActionI
         }
 
         foreach ($miraklCustomerRefund['order'] as $miraklCustomerRefundItem) {
-            $this->saveCustomerRefund($miraklCustomerRefundItem);
+            if ($miraklCustomerRefundItem[CustomerRefund::PAYMENT_WORKFLOW] === PaymentWorkflow::PAY_ON_ACCEPTANCE) {
+                $this->saveCustomerRefund($miraklCustomerRefundItem);
+            }
         }
 
         return $this->getResponse()->setContent('OK');
