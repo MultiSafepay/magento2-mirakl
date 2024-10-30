@@ -88,7 +88,7 @@ class SetWebhookAsProcessed
     public function withError(array $webhookRequestData, Exception $exception): void
     {
         try {
-            $webhookRequest = $this->webhookUtil->getWebhookRequest($webhookRequestData[Webhook::WEBHOOK_ID]);
+            $webhookRequest = $this->webhookUtil->getWebhookRequest($webhookRequestData[Webhook::WEBHOOK_ORDER_ID]);
 
             $webhookRequest->setStatus(Webhook::WEBHOOK_STATUS_PROCESSED_WITH_ERRORS);
             $webhookRequest->setObservations($exception->getMessage());
