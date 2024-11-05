@@ -17,6 +17,7 @@ namespace MultiSafepay\Mirakl\Util;
 use Mirakl\MMP\FrontOperator\Domain\Order;
 use MultiSafepay\Mirakl\Api\Mirakl\Client\FrontApiClient;
 use MultiSafepay\Mirakl\Api\Mirakl\Request\OrderRequest as OrderRequestFactory;
+use MultiSafepay\Mirakl\Api\Mirakl\Request\CancelOrderRequest as CancelOrderRequestFactory;
 
 class MiraklOrderUtil
 {
@@ -26,15 +27,22 @@ class MiraklOrderUtil
     private $orderRequestFactory;
 
     /**
+     * @var CancelOrderRequestFactory
+     */
+    private $cancelOrderRequestFactory;
+
+    /**
      * @var FrontApiClient
      */
     private $frontApiClient;
 
     public function __construct(
         OrderRequestFactory $orderRequestFactory,
+        CancelOrderRequestFactory $cancelOrderRequestFactory,
         FrontApiClient $frontApiClient
     ) {
         $this->orderRequestFactory = $orderRequestFactory;
+        $this->cancelOrderRequestFactory = $cancelOrderRequestFactory;
         $this->frontApiClient = $frontApiClient;
     }
 
@@ -50,5 +58,18 @@ class MiraklOrderUtil
         $miraklFrontApiClient = $this->frontApiClient->get();
 
         return $miraklFrontApiClient->getOrders($miraklGetOrderRequest)->first();
+    }
+
+    /**
+     * Cancel a Mirakl Order through the Mirakl API by ID
+     *
+     * @param string $miraklOrderId
+     * @return void
+     */
+    public function cancelById(string $miraklOrderId): void
+    {
+        $cancelOrderRequest = $this->cancelOrderRequestFactory->setId($miraklOrderId);
+        $miraklFrontApiClient = $this->frontApiClient->get();
+        $miraklFrontApiClient->cancelOrder($cancelOrderRequest);
     }
 }

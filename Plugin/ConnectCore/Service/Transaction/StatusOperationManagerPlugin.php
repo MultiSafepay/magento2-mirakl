@@ -20,6 +20,7 @@ use MultiSafepay\Api\Transactions\Transaction;
 use MultiSafepay\ConnectCore\Service\Transaction\StatusOperationManager;
 use MultiSafepay\Mirakl\Service\RegisterCustomerDebit;
 use MultiSafepay\Mirakl\Util\BuyNowPayLaterUtil;
+use MultiSafepay\Mirakl\Util\MiraklOrderUtil;
 use MultiSafepay\Mirakl\Util\ShoppingCartUtil;
 
 class StatusOperationManagerPlugin
@@ -37,15 +38,23 @@ class StatusOperationManagerPlugin
     private $registerCustomerDebit;
 
     /**
+     * @var MiraklOrderUtil
+     */
+    private $miraklOrderUtil;
+
+    /**
      * @param ShoppingCartUtil $shoppingCartUtil
      * @param RegisterCustomerDebit $registerCustomerDebit
+     * @param MiraklOrderUtil $miraklOrderUtil
      */
     public function __construct(
         ShoppingCartUtil $shoppingCartUtil,
-        RegisterCustomerDebit $registerCustomerDebit
+        RegisterCustomerDebit $registerCustomerDebit,
+        MiraklOrderUtil $miraklOrderUtil
     ) {
         $this->shoppingCartUtil = $shoppingCartUtil;
         $this->registerCustomerDebit = $registerCustomerDebit;
+        $this->miraklOrderUtil = $miraklOrderUtil;
     }
 
     /**
@@ -89,12 +98,19 @@ class StatusOperationManagerPlugin
             return $result;
         }
 
+        $orderId = $order->getIncrementId();
+
+        if ($transaction['status'] === Transaction::EXPIRED) {
+            $this->miraklOrderUtil->cancelById($orderId . self::SUFFIX_BNPL_MIRAKL_ORDER);
+            return $result;
+        }
+
         if ($transaction['status'] !== Transaction::SHIPPED) {
             return $result;
         }
 
         if ($transaction['financial_status'] === Transaction::COMPLETED) {
-            $this->registerCustomerDebit->execute($order->getIncrementId() . self::SUFFIX_BNPL_MIRAKL_ORDER);
+            $this->registerCustomerDebit->execute($orderId . self::SUFFIX_BNPL_MIRAKL_ORDER);
         }
 
         return $result;
