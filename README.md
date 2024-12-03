@@ -1,8 +1,11 @@
 <p align="center">
-    <img src="https://camo.githubusercontent.com/81fc6cfa9dd111f704e7e5eb0d0fd87b9096a942049377ed2295c6480f5cdf82/68747470733a2f2f7777772e6d756c7469736166657061792e636f6d2f66696c6561646d696e2f74656d706c6174652f696d672f6d756c7469736166657061792d6c6f676f2d69636f6e2e737667" width="400px" position="center">
+  <img src="https://www.multisafepay.com/fileadmin/template/img/multisafepay-logo.svg" width="400px" position="center">
 </p>
 
 # MultiSafepay module for Mirakl
+
+[![Latest stable version](https://img.shields.io/github/v/release/multisafepay/magento2-mirakl?style=for-the-badge)](https://packagist.org/packages/multisafepay/magento2-mirakl)
+[![License](https://img.shields.io/github/license/multisafepay/magento2-mirakl?style=for-the-badge)](https://github.com/MultiSafepay/magento2-mirakl/blob/master/LICENSE.md)
 
 ## About MultiSafepay ##
 MultiSafepay is a collecting payment service provider which means we take care of the agreements, technical details and payment collection required for each payment method. You can start selling online today and manage all your transactions from one place.
