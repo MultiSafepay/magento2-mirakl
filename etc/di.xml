@@ -13,9 +13,6 @@
             </argument>
         </arguments>
     </type>
-    <type name="MultiSafepay\ConnectCore\Service\Process\SendOrderConfirmation">
-        <plugin name="multisafepay_mirakl_send_order_confirmation" type="MultiSafepay\Mirakl\Plugin\ConnectCore\Service\Process\SendOrderConfirmationPlugin" sortOrder="1" disabled="false" />
-    </type>
     <type name="MultiSafepay\ConnectCore\Service\Process\CreateInvoice">
         <plugin name="multisafepay_mirakl_create_invoice" type="MultiSafepay\Mirakl\Plugin\ConnectCore\Service\Process\CreateInvoicePlugin" sortOrder="1" disabled="false" />
     </type>
