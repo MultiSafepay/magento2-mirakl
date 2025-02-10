@@ -14,10 +14,9 @@ declare(strict_types=1);
 
 namespace MultiSafepay\Mirakl\Util;
 
-use Magento\Framework\Exception\NoSuchEntityException;
-use Mirakl\MMP\FrontOperator\Domain\Collection\Shop\ShopCollection;
 use MultiSafepay\Mirakl\Api\Mirakl\Client\FrontApiClient as MiraklFrontApiClient;
 use MultiSafepay\Mirakl\Api\Mirakl\Request\ShopRequest;
+use MultiSafepay\Mirakl\Logger\Logger;
 
 class AccountUtil
 {
@@ -32,15 +31,23 @@ class AccountUtil
     private $shopRequest;
 
     /**
+     * @var Logger
+     */
+    private $logger;
+
+    /**
      * @param MiraklFrontApiClient $miraklFrontApiClient
      * @param ShopRequest $shopRequest
+     * @param Logger $logger
      */
     public function __construct(
         MiraklFrontApiClient $miraklFrontApiClient,
-        ShopRequest $shopRequest
+        ShopRequest $shopRequest,
+        Logger $logger
     ) {
         $this->miraklFrontApiClient = $miraklFrontApiClient;
         $this->shopRequest = $shopRequest;
+        $this->logger = $logger;
     }
 
     /**
@@ -48,21 +55,32 @@ class AccountUtil
      *
      * @param int $miraklShopId
      * @return string
-     * @throws NoSuchEntityException
      */
     public function getSellerMultiSafepayAccountId(int $miraklShopId): string
     {
-        try {
-            $shopRequest = $this->shopRequest->getById($miraklShopId);
-            $miraklFrontApiClient = $this->miraklFrontApiClient->get();
-            $shopInfo = $miraklFrontApiClient->getShops($shopRequest);
-        } catch (\Exception $exception) {
-            throw new NoSuchEntityException(__('Requested order doesn\'t exist'));
+        $shopRequest = $this->shopRequest->getById($miraklShopId);
+        $miraklFrontApiClient = $this->miraklFrontApiClient->get();
+        $shopInfo = $miraklFrontApiClient->getShops($shopRequest);
+
+        if ($shopInfo->isEmpty()) {
+            $this->logger->logCronProcessInfo('Shop not found in Mirakl: ', ['shop_id' => $miraklShopId]);
+            return '';
         }
 
-        return (string)$this->getMultiSafepayAccountIdFromAdditionalValues(
+        $multiSafepayAccountId = (string) $this->getMultiSafepayAccountIdFromAdditionalValues(
             $shopInfo->first()->getAdditionalFieldValues()->getItems()
         );
+
+        if (empty($multiSafepayAccountId)) {
+            $this->logger->logCronProcessInfo(
+                'MultiSafepay account ID not found in Mirakl: ',
+                ['shop_id' => $miraklShopId]
+            );
+
+            return '';
+        }
+
+        return $multiSafepayAccountId;
     }
 
     /**
