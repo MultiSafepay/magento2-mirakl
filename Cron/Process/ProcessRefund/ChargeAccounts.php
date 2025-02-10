@@ -89,17 +89,6 @@ class ChargeAccounts
             $orderRefundData[CustomerRefund::ORDER_COMMERCIAL_ID]
         )->getStoreId();
 
-        // Charge commission
-        $commissionAccountId = $this->config->getCollectingAccountId($storeId);
-        $this->charge(
-            $orderRefundData,
-            $chargeBack[PrepareRefundData::COMMISSION_CHARGEBACK_AMOUNT],
-            $commissionAccountId,
-            $storeId
-        );
-
-        $this->logger->logCronProcessInfo('Commission charged', [$orderRefundData, $chargeBack]);
-
         // Charge seller
         $sellerAccountId = $this->accountUtil->getSellerMultiSafepayAccountId(
             (int)$orderRefundData[CustomerRefund::SHOP_ID]
@@ -112,6 +101,17 @@ class ChargeAccounts
         );
 
         $this->logger->logCronProcessInfo('Seller charged', [$orderRefundData, $chargeBack]);
+
+        // Charge commission
+        $commissionAccountId = $this->config->getCollectingAccountId($storeId);
+        $this->charge(
+            $orderRefundData,
+            $chargeBack[PrepareRefundData::COMMISSION_CHARGEBACK_AMOUNT],
+            $commissionAccountId,
+            $storeId
+        );
+
+        $this->logger->logCronProcessInfo('Commission charged', [$orderRefundData, $chargeBack]);
     }
 
     /**

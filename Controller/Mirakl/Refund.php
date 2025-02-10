@@ -147,9 +147,7 @@ class Refund extends Action implements CsrfAwareActionInterface, HttpPostActionI
         }
 
         foreach ($miraklCustomerRefund['order'] as $miraklCustomerRefundItem) {
-            if ($miraklCustomerRefundItem[CustomerRefund::PAYMENT_WORKFLOW] === PaymentWorkflow::PAY_ON_ACCEPTANCE) {
-                $this->saveCustomerRefund($miraklCustomerRefundItem);
-            }
+            $this->saveCustomerRefund($miraklCustomerRefundItem);
         }
 
         return $this->getResponse()->setContent('OK');
